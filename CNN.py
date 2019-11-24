@@ -8,6 +8,7 @@ from torch.utils.data.sampler import SubsetRandomSampler
 from utils.data_loader import load_data_path, MRIDataset, show_slices
 import matplotlib.pyplot as plt
 from fastMRI.functions import transforms as T
+from typing import List
 
 # Load Data
 
@@ -36,32 +37,48 @@ class ConvNet(torch.nn.Module):
     def __init__(self) -> None:
         super(ConvNet, self).__init__()
 
-        c = 0
-        c_out = c
-        f_1 = 0
+        c = 640
+        c_1 = c
+        f_1 = 1
         n_1 = 1  # number of convs to apply
+        l1_modules: List[nn.Module] = []
+        l1_conv_layers = [nn.Conv2d(c, c_1, kernel_size=f_1) for _ in range(n_1)]
 
-        conv_layers = [nn.Conv2d(c, c_out, kernel_size=f_1, stride=1, padding=2) for i in range(n_1)]
-
-        l1_modules = conv_layers.append(nn.ReLU)
+        l1_modules.append(*l1_conv_layers)
+        l1_modules.append(nn.ReLU())
 
         self.hidden1 = nn.Sequential(*l1_modules)
 
-        self.hidden1 = nn.Sequential(
-            nn.Conv2d(640, 4 * 640, kernel_size=5, stride=1, padding=2),
-            nn.LeakyReLU(0.2),
-            # nn.MaxPool2d(kernel_size=2, stride=2)
-        )
+        n_2 = 1
+        c_2 = c_1
+        f_2 = 1
+        l2_modules = []
+        l2_conv_layers = [nn.Conv2d(c_1, c_2, kernel_size=f_2) for _ in range(n_2)]
+        l2_modules.append(*l2_conv_layers)
+        l2_modules.append(nn.ReLU())
+
+        self.hidden2 = nn.Sequential(*l2_modules)
+
+        l3_modules = []
+        c_3 = c
+        n_3 = 1
+        f_3 = 1
+        l3_conv_layers = [nn.Conv2d(c_2, c_3, kernel_size=f_3) for _ in range(n_3)]
+        l3_modules.append(*l3_conv_layers)
+
+        self.hidden3 = nn.Sequential(*l3_modules)
 
     def forward(self, x):
         out = self.hidden1(x)
-        out = out.reshape(out.size(0), -1)
+        out = self.hidden2(out)
+        out = self.hidden3(out)
+        # out = out.reshape(out.size(0), -1)
         return out
 
 
 model = ConvNet()
 
-criterion = nn.CrossEntropyLoss()
+criterion = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=EPSILON)
 total_step = len(train_loader)
 n_epochs = 5
