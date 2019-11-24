@@ -84,8 +84,8 @@ total_step = len(train_loader)
 n_epochs = 5
 loss_list = list()
 acc_list = list()
-i = 0
 for epoch in range(n_epochs):
+    i = 0
     for iteration, sample in enumerate(train_loader):
         img_gt, img_und, rawdata_und, masks, norm = sample
         output = model(img_und)
