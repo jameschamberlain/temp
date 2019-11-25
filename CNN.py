@@ -3,10 +3,12 @@ import torch
 import torchvision
 import torchvision.transforms as transforms
 import torch.nn as nn
+from torch import optim
 from torch.utils.data import DataLoader
 from torch.utils.data.sampler import SubsetRandomSampler
 from utils.data_loader import load_data_path, MRIDataset, show_slices
 import matplotlib.pyplot as plt
+import torch.nn.functional as F
 from fastMRI.functions import transforms as T
 from typing import List
 
@@ -30,7 +32,7 @@ train_loader = DataLoader(train_dataset, shuffle=True, batch_size=1, num_workers
 # val_dataset = MRIDataset(data_list['val'], acceleration=acc, center_fraction=cen_fract, use_seed=seed)
 # val_loader = DataLoader(val_dataset, shuffle=True, batch_size=1, num_workers=num_workers)
 
-EPSILON = 0.001
+EPSILON = 0.01
 
 
 # Convolutional Net
@@ -42,7 +44,7 @@ class ConvNet(torch.nn.Module):
         c_0 = 640  # input channels
         f_1 = 3  # spacial size of kernel
         c_1 = 640  # output channels
-        n_1 = 10  # number of convs to apply
+        n_1 = 64  # number of convs to apply
         l1_modules: List[nn.Module] = []
         l1_conv_layers = [nn.Conv2d(in_channels=c_0, out_channels=c_1, kernel_size=f_1, stride=1, padding=1) for _ in
                           range(n_1)]
@@ -76,7 +78,6 @@ class ConvNet(torch.nn.Module):
         out = self.hidden1(x)
         out = self.hidden2(out)
         out = self.hidden3(out)
-        # out = out.reshape(out.size(0), -1)
         return out
 
 
@@ -84,7 +85,7 @@ RED = '\033[0;31m'
 GREEN = '\033[0;32m'
 YELLOW = '\033[0;33m'
 from sys import stdout
-
+import pytorch_ssim
 printc = lambda x: stdout.write(x)
 if __name__ == "__main__":
     printc(YELLOW)
@@ -92,8 +93,9 @@ if __name__ == "__main__":
     model = ConvNet().to(device)
     printc(GREEN)
     printc("constructed model\n")
-    criterion = nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=EPSILON)
+    # criterion = nn.MSELoss()
+    criterion = pytorch_ssim.SSIM()
+    optimiser = optim.SGD(model.parameters(), lr=EPSILON)
     total_step = len(train_loader)
     n_epochs = 5
     loss_list = list()
@@ -104,25 +106,27 @@ if __name__ == "__main__":
         for iteration, sample in enumerate(train_loader):
             img_gt, img_und, rawdata_und, masks, norm = sample
             printc(YELLOW)
-            print(img_und.size())
-            print(img_gt.size())
+            # print(img_und.size())
+            # print(img_gt.size())
             # output = model(img_und.to(device))
-            input = T.complex_abs(img_und).squeeze()
-            input = input.unsqueeze(-1).unsqueeze(-1).transpose_(0, 1).to(device)
-            print(input.shape)
-            output = model(input)
-            loss = criterion(output, T.complex_abs(img_gt.squeeze().to(device)))
-            loss_list.append(loss.item())
-            optimizer.zero_grad()
+            # input = T.complex_abs(img_und).squeeze()
+            # input = input.unsqueeze(-1).unsqueeze(-1).transpose_(0, 1).to(device)
+            img_in = F.interpolate(img_und, mode='bicubic', scale_factor=1).to(device)
+            # print(img_in.shape)
+            output = model(img_in)
+            optimiser.zero_grad()
+            loss = - criterion(output, img_gt.to(device))
+            loss_list.append(- loss.item())
             loss.backward()
-            optimizer.step()
+            optimiser.step()
             total = img_gt.size(0)
             _, predicted = torch.max(output.data, 1)
-            correct = (predicted == img_gt).sum().item()
+            correct = (predicted.to(device) == img_gt.to(device)).sum().item()
             acc_list.append(correct / total)
 
-            if (i + 1) % 100 == 0:
+            if (i + 1) % 50 == 0:
                 print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}, Accuracy: {:.2f}%'
-                      .format(epoch + 1, n_epochs, i + 1, total_step, loss.item(),
+                      .format(epoch + 1, n_epochs, i + 1, total_step, - loss.item(),
                               (correct / total) * 100))
             i += 1
+    torch.save(model.state_dict(), f"./models/CNN-{epoch}")
