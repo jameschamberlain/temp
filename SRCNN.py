@@ -29,8 +29,8 @@ num_workers = 12
 train_dataset = MRIDataset(data_list['train'], acceleration=acc, center_fraction=cen_fract, use_seed=seed)
 train_loader = DataLoader(train_dataset, shuffle=True, batch_size=1, num_workers=num_workers)
 
-# val_dataset = MRIDataset(data_list['val'], acceleration=acc, center_fraction=cen_fract, use_seed=seed)
-# val_loader = DataLoader(val_dataset, shuffle=True, batch_size=1, num_workers=num_workers)
+val_dataset = MRIDataset(data_list['val'], acceleration=acc, center_fraction=cen_fract, use_seed=seed)
+val_loader = DataLoader(val_dataset, shuffle=True, batch_size=1, num_workers=num_workers)
 
 EPSILON = 0.01
 
@@ -46,7 +46,7 @@ class ConvNet(torch.nn.Module):
         c_1 = 640  # output channels
         n_1 = 64  # number of convs to apply
         l1_modules: List[nn.Module] = []
-        l1_conv_layers = [nn.Conv2d(in_channels=c_0, out_channels=c_1, kernel_size=f_1, stride=1, padding=1) for _ in
+        l1_conv_layers = [nn.Conv2d(in_channels=c_0, out_channels=c_1, kernel_size=f_1) for _ in
                           range(n_1)]
         l1_modules.extend(l1_conv_layers)
         l1_modules.append(nn.ReLU())
@@ -57,7 +57,7 @@ class ConvNet(torch.nn.Module):
         c_2 = 640  # output channels
         f_2 = 3  # size of kernel
         l2_modules = []
-        l2_conv_layers = [nn.Conv2d(in_channels=c_1, out_channels=c_2, kernel_size=f_2, stride=1, padding=1) for _ in
+        l2_conv_layers = [nn.Conv2d(in_channels=c_1, out_channels=c_2, kernel_size=f_2) for _ in
                           range(n_2)]
         l2_modules.extend(l2_conv_layers)
         l2_modules.append(nn.ReLU())
@@ -68,7 +68,7 @@ class ConvNet(torch.nn.Module):
         c_3 = 640  # output channels = original input
         n_3 = 1  # number of convolutions to apply
         f_3 = 3  # size of kernel
-        l3_conv_layers = [nn.Conv2d(in_channels=c_2, out_channels=c_3, kernel_size=f_3, stride=1, padding=1) for _ in
+        l3_conv_layers = [nn.Conv2d(in_channels=c_2, out_channels=c_3, kernel_size=f_3) for _ in
                           range(n_3)]
         l3_modules.extend(l3_conv_layers)
 
@@ -86,6 +86,7 @@ GREEN = '\033[0;32m'
 YELLOW = '\033[0;33m'
 from sys import stdout
 import pytorch_ssim
+
 printc = lambda x: stdout.write(x)
 if __name__ == "__main__":
     printc(YELLOW)
@@ -102,8 +103,8 @@ if __name__ == "__main__":
     acc_list = list()
     print("Starting training")
     for epoch in range(n_epochs):
-        i = 0
-        for iteration, sample in enumerate(train_loader):
+
+        for i, sample in enumerate(train_loader):
             img_gt, img_und, rawdata_und, masks, norm = sample
             printc(YELLOW)
             # print(img_und.size())
@@ -119,14 +120,9 @@ if __name__ == "__main__":
             loss_list.append(- loss.item())
             loss.backward()
             optimiser.step()
-            total = img_gt.size(0)
-            _, predicted = torch.max(output.data, 1)
-            correct = (predicted.to(device) == img_gt.to(device)).sum().item()
-            acc_list.append(correct / total)
 
             if (i + 1) % 50 == 0:
-                print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}, Accuracy: {:.2f}%'
-                      .format(epoch + 1, n_epochs, i + 1, total_step, - loss.item(),
-                              (correct / total) * 100))
-            i += 1
-    torch.save(model.state_dict(), f"./models/CNN-{epoch}")
+                print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'
+                      .format(epoch + 1, n_epochs, i + 1, total_step, - loss.item()))
+
+        torch.save(model.state_dict(), f"./models/CNN-{epoch}")
