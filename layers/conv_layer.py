@@ -1,4 +1,4 @@
-from typing import Any, T_co
+from typing import Any
 
 import torch.nn as nn
 
@@ -10,19 +10,17 @@ class ConvLayer(nn.Module):
         self.c_in = c_in
         self.c_out = c_out
         self.drop_probability = drop_probability
+
         self.torch_modules = nn.Sequential(
             nn.Conv2d(c_in, c_out, kernel_size=3, padding=1),
             nn.InstanceNorm2d(c_out),
             nn.ReLU(),
-            nn.Dropout2d(),
-            nn.Conv2d(c_in, c_out, kernel_size=3, padding=1),
+            nn.Dropout2d(self.drop_probability),
+            nn.Conv2d(c_out, c_out, kernel_size=3, padding=1),
             nn.InstanceNorm2d(c_out),
             nn.ReLU(),
-            nn.Dropout2d()
+            nn.Dropout2d(self.drop_probability)
         )
 
-    def forward(self, x: Any) -> T_co:
+    def forward(self, x: Any):
         return self.torch_modules(x)
-
-
-
