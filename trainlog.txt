@@ -1,210 +1,210 @@
-Epoch [1/5], Step [50/2134], Loss: 0.3161, Accuracy: 0.00%
-Epoch [1/5], Step [100/2134], Loss: 0.3530, Accuracy: 0.00%
-Epoch [1/5], Step [150/2134], Loss: 0.3536, Accuracy: 0.00%
-Epoch [1/5], Step [200/2134], Loss: 0.0759, Accuracy: 0.00%
-Epoch [1/5], Step [250/2134], Loss: 0.2312, Accuracy: 0.00%
-Epoch [1/5], Step [300/2134], Loss: 0.2864, Accuracy: 0.00%
-Epoch [1/5], Step [350/2134], Loss: 0.2715, Accuracy: 0.00%
-Epoch [1/5], Step [400/2134], Loss: 0.1215, Accuracy: 0.00%
-Epoch [1/5], Step [450/2134], Loss: 0.4546, Accuracy: 0.00%
-Epoch [1/5], Step [500/2134], Loss: 0.4663, Accuracy: 0.00%
-Epoch [1/5], Step [550/2134], Loss: 0.0749, Accuracy: 0.00%
-Epoch [1/5], Step [600/2134], Loss: 0.0808, Accuracy: 0.00%
-Epoch [1/5], Step [650/2134], Loss: 0.1710, Accuracy: 0.00%
-Epoch [1/5], Step [700/2134], Loss: 0.4021, Accuracy: 0.00%
-Epoch [1/5], Step [750/2134], Loss: 0.3068, Accuracy: 0.00%
-Epoch [1/5], Step [800/2134], Loss: 0.1584, Accuracy: 0.00%
-Epoch [1/5], Step [850/2134], Loss: 0.2375, Accuracy: 0.00%
-Epoch [1/5], Step [900/2134], Loss: 0.2126, Accuracy: 0.00%
-Epoch [1/5], Step [950/2134], Loss: 0.3445, Accuracy: 0.00%
-Epoch [1/5], Step [1000/2134], Loss: 0.1254, Accuracy: 0.00%
-Epoch [1/5], Step [1050/2134], Loss: 0.2737, Accuracy: 0.00%
-Epoch [1/5], Step [1100/2134], Loss: 0.4771, Accuracy: 0.00%
-Epoch [1/5], Step [1150/2134], Loss: 0.1793, Accuracy: 0.00%
-Epoch [1/5], Step [1200/2134], Loss: 0.2437, Accuracy: 0.00%
-Epoch [1/5], Step [1250/2134], Loss: 0.2102, Accuracy: 0.00%
-Epoch [1/5], Step [1300/2134], Loss: 0.4443, Accuracy: 0.00%
-Epoch [1/5], Step [1350/2134], Loss: 0.0502, Accuracy: 0.00%
-Epoch [1/5], Step [1400/2134], Loss: 0.4997, Accuracy: 0.00%
-Epoch [1/5], Step [1450/2134], Loss: 0.1594, Accuracy: 0.00%
-Epoch [1/5], Step [1500/2134], Loss: 0.3449, Accuracy: 0.00%
-Epoch [1/5], Step [1550/2134], Loss: 0.4185, Accuracy: 0.00%
-Epoch [1/5], Step [1600/2134], Loss: 0.0833, Accuracy: 0.00%
-Epoch [1/5], Step [1650/2134], Loss: 0.4064, Accuracy: 0.00%
-Epoch [1/5], Step [1700/2134], Loss: 0.3070, Accuracy: 0.00%
-Epoch [1/5], Step [1750/2134], Loss: 0.1711, Accuracy: 0.00%
-Epoch [1/5], Step [1800/2134], Loss: 0.3681, Accuracy: 0.00%
-Epoch [1/5], Step [1850/2134], Loss: 0.4163, Accuracy: 0.00%
-Epoch [1/5], Step [1900/2134], Loss: 0.0651, Accuracy: 0.00%
-Epoch [1/5], Step [1950/2134], Loss: 0.3983, Accuracy: 0.00%
-Epoch [1/5], Step [2000/2134], Loss: 0.1394, Accuracy: 0.00%
-Epoch [1/5], Step [2050/2134], Loss: 0.0873, Accuracy: 0.00%
-Epoch [1/5], Step [2100/2134], Loss: 0.3634, Accuracy: 0.00%
-Epoch [2/5], Step [50/2134], Loss: 0.2749, Accuracy: 0.00%
-Epoch [2/5], Step [100/2134], Loss: 0.4496, Accuracy: 0.00%
-Epoch [2/5], Step [150/2134], Loss: 0.4311, Accuracy: 0.00%
-Epoch [2/5], Step [200/2134], Loss: 0.4780, Accuracy: 0.00%
-Epoch [2/5], Step [250/2134], Loss: 0.2171, Accuracy: 0.00%
-Epoch [2/5], Step [300/2134], Loss: 0.3092, Accuracy: 0.00%
-Epoch [2/5], Step [350/2134], Loss: 0.2668, Accuracy: 0.00%
-Epoch [2/5], Step [400/2134], Loss: 0.0976, Accuracy: 0.00%
-Epoch [2/5], Step [450/2134], Loss: 0.0712, Accuracy: 0.00%
-Epoch [2/5], Step [500/2134], Loss: 0.3058, Accuracy: 0.00%
-Epoch [2/5], Step [550/2134], Loss: 0.4543, Accuracy: 0.00%
-Epoch [2/5], Step [600/2134], Loss: 0.4252, Accuracy: 0.00%
-Epoch [2/5], Step [650/2134], Loss: 0.1472, Accuracy: 0.00%
-Epoch [2/5], Step [700/2134], Loss: 0.2147, Accuracy: 0.00%
-Epoch [2/5], Step [750/2134], Loss: 0.2511, Accuracy: 0.00%
-Epoch [2/5], Step [800/2134], Loss: 0.3580, Accuracy: 0.00%
-Epoch [2/5], Step [850/2134], Loss: 0.3441, Accuracy: 0.00%
-Epoch [2/5], Step [900/2134], Loss: 0.0899, Accuracy: 0.00%
-Epoch [2/5], Step [950/2134], Loss: 0.2411, Accuracy: 0.00%
-Epoch [2/5], Step [1000/2134], Loss: 0.2280, Accuracy: 0.00%
-Epoch [2/5], Step [1050/2134], Loss: 0.3748, Accuracy: 0.00%
-Epoch [2/5], Step [1100/2134], Loss: 0.1912, Accuracy: 0.00%
-Epoch [2/5], Step [1150/2134], Loss: 0.2164, Accuracy: 0.00%
-Epoch [2/5], Step [1200/2134], Loss: 0.1206, Accuracy: 0.00%
-Epoch [2/5], Step [1250/2134], Loss: 0.2226, Accuracy: 0.00%
-Epoch [2/5], Step [1300/2134], Loss: 0.4651, Accuracy: 0.00%
-Epoch [2/5], Step [1350/2134], Loss: 0.5034, Accuracy: 0.00%
-Epoch [2/5], Step [1400/2134], Loss: 0.3748, Accuracy: 0.00%
-Epoch [2/5], Step [1450/2134], Loss: 0.4232, Accuracy: 0.00%
-Epoch [2/5], Step [1500/2134], Loss: 0.2992, Accuracy: 0.00%
-Epoch [2/5], Step [1550/2134], Loss: 0.3400, Accuracy: 0.00%
-Epoch [2/5], Step [1600/2134], Loss: 0.3768, Accuracy: 0.00%
-Epoch [2/5], Step [1650/2134], Loss: 0.5442, Accuracy: 0.00%
-Epoch [2/5], Step [1700/2134], Loss: 0.4518, Accuracy: 0.00%
-Epoch [2/5], Step [1750/2134], Loss: 0.2276, Accuracy: 0.00%
-Epoch [2/5], Step [1800/2134], Loss: 0.1899, Accuracy: 0.00%
-Epoch [2/5], Step [1850/2134], Loss: 0.4791, Accuracy: 0.00%
-Epoch [2/5], Step [1900/2134], Loss: 0.4994, Accuracy: 0.00%
-Epoch [2/5], Step [1950/2134], Loss: 0.3355, Accuracy: 0.00%
-Epoch [2/5], Step [2000/2134], Loss: 0.5350, Accuracy: 0.00%
-Epoch [2/5], Step [2050/2134], Loss: 0.3378, Accuracy: 0.00%
-Epoch [2/5], Step [2100/2134], Loss: 0.4548, Accuracy: 0.00%
-Epoch [3/5], Step [50/2134], Loss: 0.4661, Accuracy: 0.00%
-Epoch [3/5], Step [100/2134], Loss: 0.2968, Accuracy: 0.00%
-Epoch [3/5], Step [150/2134], Loss: 0.4833, Accuracy: 0.00%
-Epoch [3/5], Step [200/2134], Loss: 0.2050, Accuracy: 0.00%
-Epoch [3/5], Step [250/2134], Loss: 0.3613, Accuracy: 0.00%
-Epoch [3/5], Step [300/2134], Loss: 0.4877, Accuracy: 0.00%
-Epoch [3/5], Step [350/2134], Loss: 0.3902, Accuracy: 0.00%
-Epoch [3/5], Step [400/2134], Loss: 0.2225, Accuracy: 0.00%
-Epoch [3/5], Step [450/2134], Loss: 0.4074, Accuracy: 0.00%
-Epoch [3/5], Step [500/2134], Loss: 0.3593, Accuracy: 0.00%
-Epoch [3/5], Step [550/2134], Loss: 0.3893, Accuracy: 0.00%
-Epoch [3/5], Step [600/2134], Loss: 0.2127, Accuracy: 0.00%
-Epoch [3/5], Step [650/2134], Loss: 0.4865, Accuracy: 0.00%
-Epoch [3/5], Step [700/2134], Loss: 0.3529, Accuracy: 0.00%
-Epoch [3/5], Step [750/2134], Loss: 0.4864, Accuracy: 0.00%
-Epoch [3/5], Step [800/2134], Loss: 0.3698, Accuracy: 0.00%
-Epoch [3/5], Step [850/2134], Loss: 0.2206, Accuracy: 0.00%
-Epoch [3/5], Step [900/2134], Loss: 0.2418, Accuracy: 0.00%
-Epoch [3/5], Step [950/2134], Loss: 0.1716, Accuracy: 0.00%
-Epoch [3/5], Step [1000/2134], Loss: 0.4335, Accuracy: 0.00%
-Epoch [3/5], Step [1050/2134], Loss: 0.5929, Accuracy: 0.00%
-Epoch [3/5], Step [1100/2134], Loss: 0.5305, Accuracy: 0.00%
-Epoch [3/5], Step [1150/2134], Loss: 0.2395, Accuracy: 0.00%
-Epoch [3/5], Step [1200/2134], Loss: 0.2826, Accuracy: 0.00%
-Epoch [3/5], Step [1250/2134], Loss: 0.3545, Accuracy: 0.00%
-Epoch [3/5], Step [1300/2134], Loss: 0.3509, Accuracy: 0.00%
-Epoch [3/5], Step [1350/2134], Loss: 0.3986, Accuracy: 0.00%
-Epoch [3/5], Step [1400/2134], Loss: 0.3482, Accuracy: 0.00%
-Epoch [3/5], Step [1450/2134], Loss: 0.3107, Accuracy: 0.00%
-Epoch [3/5], Step [1500/2134], Loss: 0.5284, Accuracy: 0.00%
-Epoch [3/5], Step [1550/2134], Loss: 0.2953, Accuracy: 0.00%
-Epoch [3/5], Step [1600/2134], Loss: 0.2458, Accuracy: 0.00%
-Epoch [3/5], Step [1650/2134], Loss: 0.3732, Accuracy: 0.00%
-Epoch [3/5], Step [1700/2134], Loss: 0.4082, Accuracy: 0.00%
-Epoch [3/5], Step [1750/2134], Loss: 0.4704, Accuracy: 0.00%
-Epoch [3/5], Step [1800/2134], Loss: 0.3617, Accuracy: 0.00%
-Epoch [3/5], Step [1850/2134], Loss: 0.1132, Accuracy: 0.00%
-Epoch [3/5], Step [1900/2134], Loss: 0.4563, Accuracy: 0.00%
-Epoch [3/5], Step [1950/2134], Loss: 0.4428, Accuracy: 0.00%
-Epoch [3/5], Step [2000/2134], Loss: 0.4434, Accuracy: 0.00%
-Epoch [3/5], Step [2050/2134], Loss: 0.2457, Accuracy: 0.00%
-Epoch [3/5], Step [2100/2134], Loss: 0.5550, Accuracy: 0.00%
-Epoch [4/5], Step [50/2134], Loss: 0.2609, Accuracy: 0.00%
-Epoch [4/5], Step [100/2134], Loss: 0.3526, Accuracy: 0.00%
-Epoch [4/5], Step [150/2134], Loss: 0.3326, Accuracy: 0.00%
-Epoch [4/5], Step [200/2134], Loss: 0.3856, Accuracy: 0.00%
-Epoch [4/5], Step [250/2134], Loss: 0.1962, Accuracy: 0.00%
-Epoch [4/5], Step [300/2134], Loss: 0.4080, Accuracy: 0.00%
-Epoch [4/5], Step [350/2134], Loss: 0.4964, Accuracy: 0.00%
-Epoch [4/5], Step [400/2134], Loss: 0.5951, Accuracy: 0.00%
-Epoch [4/5], Step [450/2134], Loss: 0.4034, Accuracy: 0.00%
-Epoch [4/5], Step [500/2134], Loss: 0.2935, Accuracy: 0.00%
-Epoch [4/5], Step [550/2134], Loss: 0.5176, Accuracy: 0.00%
-Epoch [4/5], Step [600/2134], Loss: 0.5231, Accuracy: 0.00%
-Epoch [4/5], Step [650/2134], Loss: 0.1512, Accuracy: 0.00%
-Epoch [4/5], Step [700/2134], Loss: 0.5813, Accuracy: 0.00%
-Epoch [4/5], Step [750/2134], Loss: 0.5504, Accuracy: 0.00%
-Epoch [4/5], Step [800/2134], Loss: 0.3103, Accuracy: 0.00%
-Epoch [4/5], Step [850/2134], Loss: 0.2904, Accuracy: 0.00%
-Epoch [4/5], Step [900/2134], Loss: 0.4024, Accuracy: 0.00%
-Epoch [4/5], Step [950/2134], Loss: 0.3614, Accuracy: 0.00%
-Epoch [4/5], Step [1000/2134], Loss: 0.2606, Accuracy: 0.00%
-Epoch [4/5], Step [1050/2134], Loss: 0.4945, Accuracy: 0.00%
-Epoch [4/5], Step [1100/2134], Loss: 0.4424, Accuracy: 0.00%
-Epoch [4/5], Step [1150/2134], Loss: 0.4897, Accuracy: 0.00%
-Epoch [4/5], Step [1200/2134], Loss: 0.5222, Accuracy: 0.00%
-Epoch [4/5], Step [1250/2134], Loss: 0.4357, Accuracy: 0.00%
-Epoch [4/5], Step [1300/2134], Loss: 0.3558, Accuracy: 0.00%
-Epoch [4/5], Step [1350/2134], Loss: 0.2235, Accuracy: 0.00%
-Epoch [4/5], Step [1400/2134], Loss: 0.4690, Accuracy: 0.00%
-Epoch [4/5], Step [1450/2134], Loss: 0.3833, Accuracy: 0.00%
-Epoch [4/5], Step [1500/2134], Loss: 0.1837, Accuracy: 0.00%
-Epoch [4/5], Step [1550/2134], Loss: 0.3701, Accuracy: 0.00%
-Epoch [4/5], Step [1600/2134], Loss: 0.2454, Accuracy: 0.00%
-Epoch [4/5], Step [1650/2134], Loss: 0.3490, Accuracy: 0.00%
-Epoch [4/5], Step [1700/2134], Loss: 0.5178, Accuracy: 0.00%
-Epoch [4/5], Step [1750/2134], Loss: 0.2916, Accuracy: 0.00%
-Epoch [4/5], Step [1800/2134], Loss: 0.3251, Accuracy: 0.00%
-Epoch [4/5], Step [1850/2134], Loss: 0.3674, Accuracy: 0.00%
-Epoch [4/5], Step [1900/2134], Loss: 0.4002, Accuracy: 0.00%
-Epoch [4/5], Step [1950/2134], Loss: 0.5557, Accuracy: 0.00%
-Epoch [4/5], Step [2000/2134], Loss: 0.5380, Accuracy: 0.00%
-Epoch [4/5], Step [2050/2134], Loss: 0.3228, Accuracy: 0.00%
-Epoch [4/5], Step [2100/2134], Loss: 0.2895, Accuracy: 0.00%
-Epoch [5/5], Step [50/2134], Loss: 0.5291, Accuracy: 0.00%
-Epoch [5/5], Step [100/2134], Loss: 0.3297, Accuracy: 0.00%
-Epoch [5/5], Step [150/2134], Loss: 0.4434, Accuracy: 0.00%
-Epoch [5/5], Step [200/2134], Loss: 0.3892, Accuracy: 0.00%
-Epoch [5/5], Step [250/2134], Loss: 0.2702, Accuracy: 0.00%
-Epoch [5/5], Step [300/2134], Loss: 0.5222, Accuracy: 0.00%
-Epoch [5/5], Step [350/2134], Loss: 0.5388, Accuracy: 0.00%
-Epoch [5/5], Step [400/2134], Loss: 0.4446, Accuracy: 0.00%
-Epoch [5/5], Step [450/2134], Loss: 0.3358, Accuracy: 0.00%
-Epoch [5/5], Step [500/2134], Loss: 0.5502, Accuracy: 0.00%
-Epoch [5/5], Step [550/2134], Loss: 0.4241, Accuracy: 0.00%
-Epoch [5/5], Step [600/2134], Loss: 0.5237, Accuracy: 0.00%
-Epoch [5/5], Step [650/2134], Loss: 0.2969, Accuracy: 0.00%
-Epoch [5/5], Step [700/2134], Loss: 0.4039, Accuracy: 0.00%
-Epoch [5/5], Step [750/2134], Loss: 0.3776, Accuracy: 0.00%
-Epoch [5/5], Step [800/2134], Loss: 0.3536, Accuracy: 0.00%
-Epoch [5/5], Step [850/2134], Loss: 0.3193, Accuracy: 0.00%
-Epoch [5/5], Step [900/2134], Loss: 0.3411, Accuracy: 0.00%
-Epoch [5/5], Step [950/2134], Loss: 0.2759, Accuracy: 0.00%
-Epoch [5/5], Step [1000/2134], Loss: 0.4680, Accuracy: 0.00%
-Epoch [5/5], Step [1050/2134], Loss: 0.2157, Accuracy: 0.00%
-Epoch [5/5], Step [1100/2134], Loss: 0.4281, Accuracy: 0.00%
-Epoch [5/5], Step [1150/2134], Loss: 0.4750, Accuracy: 0.00%
-Epoch [5/5], Step [1200/2134], Loss: 0.2922, Accuracy: 0.00%
-Epoch [5/5], Step [1250/2134], Loss: 0.2415, Accuracy: 0.00%
-Epoch [5/5], Step [1300/2134], Loss: 0.5255, Accuracy: 0.00%
-Epoch [5/5], Step [1350/2134], Loss: 0.3302, Accuracy: 0.00%
-Epoch [5/5], Step [1400/2134], Loss: 0.4710, Accuracy: 0.00%
-Epoch [5/5], Step [1450/2134], Loss: 0.3444, Accuracy: 0.00%
-Epoch [5/5], Step [1500/2134], Loss: 0.2170, Accuracy: 0.00%
-Epoch [5/5], Step [1550/2134], Loss: 0.1628, Accuracy: 0.00%
-Epoch [5/5], Step [1600/2134], Loss: 0.3001, Accuracy: 0.00%
-Epoch [5/5], Step [1650/2134], Loss: 0.4145, Accuracy: 0.00%
-Epoch [5/5], Step [1700/2134], Loss: 0.5053, Accuracy: 0.00%
-Epoch [5/5], Step [1750/2134], Loss: 0.3608, Accuracy: 0.00%
-Epoch [5/5], Step [1800/2134], Loss: 0.4288, Accuracy: 0.00%
-Epoch [5/5], Step [1850/2134], Loss: 0.4225, Accuracy: 0.00%
-Epoch [5/5], Step [1900/2134], Loss: 0.2327, Accuracy: 0.00%
-Epoch [5/5], Step [1950/2134], Loss: 0.4461, Accuracy: 0.00%
-Epoch [5/5], Step [2000/2134], Loss: 0.3206, Accuracy: 0.00%
-Epoch [5/5], Step [2050/2134], Loss: 0.4274, Accuracy: 0.00%
-Epoch [5/5], Step [2100/2134], Loss: 0.1632, Accuracy: 0.00%
+Epoch [1/5], Step [50/2134], Loss: 0.3161
+Epoch [1/5], Step [100/2134], Loss: 0.3530
+Epoch [1/5], Step [150/2134], Loss: 0.3536
+Epoch [1/5], Step [200/2134], Loss: 0.0759
+Epoch [1/5], Step [250/2134], Loss: 0.2312
+Epoch [1/5], Step [300/2134], Loss: 0.2864
+Epoch [1/5], Step [350/2134], Loss: 0.2715
+Epoch [1/5], Step [400/2134], Loss: 0.1215
+Epoch [1/5], Step [450/2134], Loss: 0.4546
+Epoch [1/5], Step [500/2134], Loss: 0.4663
+Epoch [1/5], Step [550/2134], Loss: 0.0749
+Epoch [1/5], Step [600/2134], Loss: 0.0808
+Epoch [1/5], Step [650/2134], Loss: 0.1710
+Epoch [1/5], Step [700/2134], Loss: 0.4021
+Epoch [1/5], Step [750/2134], Loss: 0.3068
+Epoch [1/5], Step [800/2134], Loss: 0.1584
+Epoch [1/5], Step [850/2134], Loss: 0.2375
+Epoch [1/5], Step [900/2134], Loss: 0.2126
+Epoch [1/5], Step [950/2134], Loss: 0.3445
+Epoch [1/5], Step [1000/2134], Loss: 0.1254
+Epoch [1/5], Step [1050/2134], Loss: 0.2737
+Epoch [1/5], Step [1100/2134], Loss: 0.4771
+Epoch [1/5], Step [1150/2134], Loss: 0.1793
+Epoch [1/5], Step [1200/2134], Loss: 0.2437
+Epoch [1/5], Step [1250/2134], Loss: 0.2102
+Epoch [1/5], Step [1300/2134], Loss: 0.4443
+Epoch [1/5], Step [1350/2134], Loss: 0.0502
+Epoch [1/5], Step [1400/2134], Loss: 0.4997
+Epoch [1/5], Step [1450/2134], Loss: 0.1594
+Epoch [1/5], Step [1500/2134], Loss: 0.3449
+Epoch [1/5], Step [1550/2134], Loss: 0.4185
+Epoch [1/5], Step [1600/2134], Loss: 0.0833
+Epoch [1/5], Step [1650/2134], Loss: 0.4064
+Epoch [1/5], Step [1700/2134], Loss: 0.3070
+Epoch [1/5], Step [1750/2134], Loss: 0.1711
+Epoch [1/5], Step [1800/2134], Loss: 0.3681
+Epoch [1/5], Step [1850/2134], Loss: 0.4163
+Epoch [1/5], Step [1900/2134], Loss: 0.0651
+Epoch [1/5], Step [1950/2134], Loss: 0.3983
+Epoch [1/5], Step [2000/2134], Loss: 0.1394
+Epoch [1/5], Step [2050/2134], Loss: 0.0873
+Epoch [1/5], Step [2100/2134], Loss: 0.3634
+Epoch [2/5], Step [50/2134], Loss: 0.2749
+Epoch [2/5], Step [100/2134], Loss: 0.4496
+Epoch [2/5], Step [150/2134], Loss: 0.4311
+Epoch [2/5], Step [200/2134], Loss: 0.4780
+Epoch [2/5], Step [250/2134], Loss: 0.2171
+Epoch [2/5], Step [300/2134], Loss: 0.3092
+Epoch [2/5], Step [350/2134], Loss: 0.2668
+Epoch [2/5], Step [400/2134], Loss: 0.0976
+Epoch [2/5], Step [450/2134], Loss: 0.0712
+Epoch [2/5], Step [500/2134], Loss: 0.3058
+Epoch [2/5], Step [550/2134], Loss: 0.4543
+Epoch [2/5], Step [600/2134], Loss: 0.4252
+Epoch [2/5], Step [650/2134], Loss: 0.1472
+Epoch [2/5], Step [700/2134], Loss: 0.2147
+Epoch [2/5], Step [750/2134], Loss: 0.2511
+Epoch [2/5], Step [800/2134], Loss: 0.3580
+Epoch [2/5], Step [850/2134], Loss: 0.3441
+Epoch [2/5], Step [900/2134], Loss: 0.0899
+Epoch [2/5], Step [950/2134], Loss: 0.2411
+Epoch [2/5], Step [1000/2134], Loss: 0.2280
+Epoch [2/5], Step [1050/2134], Loss: 0.3748
+Epoch [2/5], Step [1100/2134], Loss: 0.1912
+Epoch [2/5], Step [1150/2134], Loss: 0.2164
+Epoch [2/5], Step [1200/2134], Loss: 0.1206
+Epoch [2/5], Step [1250/2134], Loss: 0.2226
+Epoch [2/5], Step [1300/2134], Loss: 0.4651
+Epoch [2/5], Step [1350/2134], Loss: 0.5034
+Epoch [2/5], Step [1400/2134], Loss: 0.3748
+Epoch [2/5], Step [1450/2134], Loss: 0.4232
+Epoch [2/5], Step [1500/2134], Loss: 0.2992
+Epoch [2/5], Step [1550/2134], Loss: 0.3400
+Epoch [2/5], Step [1600/2134], Loss: 0.3768
+Epoch [2/5], Step [1650/2134], Loss: 0.5442
+Epoch [2/5], Step [1700/2134], Loss: 0.4518
+Epoch [2/5], Step [1750/2134], Loss: 0.2276
+Epoch [2/5], Step [1800/2134], Loss: 0.1899
+Epoch [2/5], Step [1850/2134], Loss: 0.4791
+Epoch [2/5], Step [1900/2134], Loss: 0.4994
+Epoch [2/5], Step [1950/2134], Loss: 0.3355
+Epoch [2/5], Step [2000/2134], Loss: 0.5350
+Epoch [2/5], Step [2050/2134], Loss: 0.3378
+Epoch [2/5], Step [2100/2134], Loss: 0.4548
+Epoch [3/5], Step [50/2134], Loss: 0.4661
+Epoch [3/5], Step [100/2134], Loss: 0.2968
+Epoch [3/5], Step [150/2134], Loss: 0.4833
+Epoch [3/5], Step [200/2134], Loss: 0.2050
+Epoch [3/5], Step [250/2134], Loss: 0.3613
+Epoch [3/5], Step [300/2134], Loss: 0.4877
+Epoch [3/5], Step [350/2134], Loss: 0.3902
+Epoch [3/5], Step [400/2134], Loss: 0.2225
+Epoch [3/5], Step [450/2134], Loss: 0.4074
+Epoch [3/5], Step [500/2134], Loss: 0.3593
+Epoch [3/5], Step [550/2134], Loss: 0.3893
+Epoch [3/5], Step [600/2134], Loss: 0.2127
+Epoch [3/5], Step [650/2134], Loss: 0.4865
+Epoch [3/5], Step [700/2134], Loss: 0.3529
+Epoch [3/5], Step [750/2134], Loss: 0.4864
+Epoch [3/5], Step [800/2134], Loss: 0.3698
+Epoch [3/5], Step [850/2134], Loss: 0.2206
+Epoch [3/5], Step [900/2134], Loss: 0.2418
+Epoch [3/5], Step [950/2134], Loss: 0.1716
+Epoch [3/5], Step [1000/2134], Loss: 0.4335
+Epoch [3/5], Step [1050/2134], Loss: 0.5929
+Epoch [3/5], Step [1100/2134], Loss: 0.5305
+Epoch [3/5], Step [1150/2134], Loss: 0.2395
+Epoch [3/5], Step [1200/2134], Loss: 0.2826
+Epoch [3/5], Step [1250/2134], Loss: 0.3545
+Epoch [3/5], Step [1300/2134], Loss: 0.3509
+Epoch [3/5], Step [1350/2134], Loss: 0.3986
+Epoch [3/5], Step [1400/2134], Loss: 0.3482
+Epoch [3/5], Step [1450/2134], Loss: 0.3107
+Epoch [3/5], Step [1500/2134], Loss: 0.5284
+Epoch [3/5], Step [1550/2134], Loss: 0.2953
+Epoch [3/5], Step [1600/2134], Loss: 0.2458
+Epoch [3/5], Step [1650/2134], Loss: 0.3732
+Epoch [3/5], Step [1700/2134], Loss: 0.4082
+Epoch [3/5], Step [1750/2134], Loss: 0.4704
+Epoch [3/5], Step [1800/2134], Loss: 0.3617
+Epoch [3/5], Step [1850/2134], Loss: 0.1132
+Epoch [3/5], Step [1900/2134], Loss: 0.4563
+Epoch [3/5], Step [1950/2134], Loss: 0.4428
+Epoch [3/5], Step [2000/2134], Loss: 0.4434
+Epoch [3/5], Step [2050/2134], Loss: 0.2457
+Epoch [3/5], Step [2100/2134], Loss: 0.5550
+Epoch [4/5], Step [50/2134], Loss: 0.2609
+Epoch [4/5], Step [100/2134], Loss: 0.3526
+Epoch [4/5], Step [150/2134], Loss: 0.3326
+Epoch [4/5], Step [200/2134], Loss: 0.3856
+Epoch [4/5], Step [250/2134], Loss: 0.1962
+Epoch [4/5], Step [300/2134], Loss: 0.4080
+Epoch [4/5], Step [350/2134], Loss: 0.4964
+Epoch [4/5], Step [400/2134], Loss: 0.5951
+Epoch [4/5], Step [450/2134], Loss: 0.4034
+Epoch [4/5], Step [500/2134], Loss: 0.2935
+Epoch [4/5], Step [550/2134], Loss: 0.5176
+Epoch [4/5], Step [600/2134], Loss: 0.5231
+Epoch [4/5], Step [650/2134], Loss: 0.1512
+Epoch [4/5], Step [700/2134], Loss: 0.5813
+Epoch [4/5], Step [750/2134], Loss: 0.5504
+Epoch [4/5], Step [800/2134], Loss: 0.3103
+Epoch [4/5], Step [850/2134], Loss: 0.2904
+Epoch [4/5], Step [900/2134], Loss: 0.4024
+Epoch [4/5], Step [950/2134], Loss: 0.3614
+Epoch [4/5], Step [1000/2134], Loss: 0.2606
+Epoch [4/5], Step [1050/2134], Loss: 0.4945
+Epoch [4/5], Step [1100/2134], Loss: 0.4424
+Epoch [4/5], Step [1150/2134], Loss: 0.4897
+Epoch [4/5], Step [1200/2134], Loss: 0.5222
+Epoch [4/5], Step [1250/2134], Loss: 0.4357
+Epoch [4/5], Step [1300/2134], Loss: 0.3558
+Epoch [4/5], Step [1350/2134], Loss: 0.2235
+Epoch [4/5], Step [1400/2134], Loss: 0.4690
+Epoch [4/5], Step [1450/2134], Loss: 0.3833
+Epoch [4/5], Step [1500/2134], Loss: 0.1837
+Epoch [4/5], Step [1550/2134], Loss: 0.3701
+Epoch [4/5], Step [1600/2134], Loss: 0.2454
+Epoch [4/5], Step [1650/2134], Loss: 0.3490
+Epoch [4/5], Step [1700/2134], Loss: 0.5178
+Epoch [4/5], Step [1750/2134], Loss: 0.2916
+Epoch [4/5], Step [1800/2134], Loss: 0.3251
+Epoch [4/5], Step [1850/2134], Loss: 0.3674
+Epoch [4/5], Step [1900/2134], Loss: 0.4002
+Epoch [4/5], Step [1950/2134], Loss: 0.5557
+Epoch [4/5], Step [2000/2134], Loss: 0.5380
+Epoch [4/5], Step [2050/2134], Loss: 0.3228
+Epoch [4/5], Step [2100/2134], Loss: 0.2895
+Epoch [5/5], Step [50/2134], Loss: 0.5291
+Epoch [5/5], Step [100/2134], Loss: 0.3297
+Epoch [5/5], Step [150/2134], Loss: 0.4434
+Epoch [5/5], Step [200/2134], Loss: 0.3892
+Epoch [5/5], Step [250/2134], Loss: 0.2702
+Epoch [5/5], Step [300/2134], Loss: 0.5222
+Epoch [5/5], Step [350/2134], Loss: 0.5388
+Epoch [5/5], Step [400/2134], Loss: 0.4446
+Epoch [5/5], Step [450/2134], Loss: 0.3358
+Epoch [5/5], Step [500/2134], Loss: 0.5502
+Epoch [5/5], Step [550/2134], Loss: 0.4241
+Epoch [5/5], Step [600/2134], Loss: 0.5237
+Epoch [5/5], Step [650/2134], Loss: 0.2969
+Epoch [5/5], Step [700/2134], Loss: 0.4039
+Epoch [5/5], Step [750/2134], Loss: 0.3776
+Epoch [5/5], Step [800/2134], Loss: 0.3536
+Epoch [5/5], Step [850/2134], Loss: 0.3193
+Epoch [5/5], Step [900/2134], Loss: 0.3411
+Epoch [5/5], Step [950/2134], Loss: 0.2759
+Epoch [5/5], Step [1000/2134], Loss: 0.4680
+Epoch [5/5], Step [1050/2134], Loss: 0.2157
+Epoch [5/5], Step [1100/2134], Loss: 0.4281
+Epoch [5/5], Step [1150/2134], Loss: 0.4750
+Epoch [5/5], Step [1200/2134], Loss: 0.2922
+Epoch [5/5], Step [1250/2134], Loss: 0.2415
+Epoch [5/5], Step [1300/2134], Loss: 0.5255
+Epoch [5/5], Step [1350/2134], Loss: 0.3302
+Epoch [5/5], Step [1400/2134], Loss: 0.4710
+Epoch [5/5], Step [1450/2134], Loss: 0.3444
+Epoch [5/5], Step [1500/2134], Loss: 0.2170
+Epoch [5/5], Step [1550/2134], Loss: 0.1628
+Epoch [5/5], Step [1600/2134], Loss: 0.3001
+Epoch [5/5], Step [1650/2134], Loss: 0.4145
+Epoch [5/5], Step [1700/2134], Loss: 0.5053
+Epoch [5/5], Step [1750/2134], Loss: 0.3608
+Epoch [5/5], Step [1800/2134], Loss: 0.4288
+Epoch [5/5], Step [1850/2134], Loss: 0.4225
+Epoch [5/5], Step [1900/2134], Loss: 0.2327
+Epoch [5/5], Step [1950/2134], Loss: 0.4461
+Epoch [5/5], Step [2000/2134], Loss: 0.3206
+Epoch [5/5], Step [2050/2134], Loss: 0.4274
+Epoch [5/5], Step [2100/2134], Loss: 0.1632
