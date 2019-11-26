@@ -27,7 +27,11 @@ class UNet(nn.Module):
             self.down_sample_layers += [ConvLayer(channels, channels * 2, self.drop_prob)]
             channels *= 2
 
-        self.conv = ConvLayer(channels, channels, self.drop_prob)
+        self.conv = nn.Sequential(
+            nn.Conv2d(c_in, c_out, kernel_size=3, padding=1),
+            nn.InstanceNorm2d(c_out),
+            nn.ReLU(),
+            nn.Dropout2d(self.drop_probability))
 
         self.up_sample_layers = nn.ModuleList()
         for _ in range(self.n_pool_layers - 1):
