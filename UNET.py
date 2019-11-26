@@ -36,9 +36,9 @@ class UNet(nn.Module):
         self.up_sample_layers += [ConvLayer(channels * 2, channels, self.drop_prob)]
 
         self.conv2 = nn.Sequential(
-            nn.Conv2d(channels, channels // 2, kernel_size=1),
-            nn.Conv2d(channels // 2, self.c_out, kernel_size=1),
-            nn.Conv2d(self.c_out, self.c_out, kernel_size=1)
+            nn.Conv2d(channels, channels // 2, kernel_size=1, padding=1),
+            nn.Conv2d(channels // 2, self.c_out, kernel_size=1, padding=1),
+            nn.Conv2d(self.c_out, self.c_out, kernel_size=1, padding=1)
         )
 
     def forward(self, x: Any, ):
@@ -50,7 +50,10 @@ class UNet(nn.Module):
             y = F.max_pool2d(y, kernel_size=2)
 
         y = self.conv(y)
-
+        print("printing stack")
+        for each in stack:
+            print(each.shape)
+        print("finished printing stack")
         for layer in self.up_sample_layers:
             y = F.interpolate(y, scale_factor=2, mode='bilinear', align_corners=False)
             print(stack[-1].shape)
@@ -75,12 +78,13 @@ num_workers = 8
 
 # create data loader for training set. It applies same to validation set as well
 train_dataset = MRIDataset(data_list['train'], acceleration=acc, center_fraction=cen_fract, use_seed=seed)
-train_loader = DataLoader(train_dataset, shuffle=True, batch_size=16, num_workers=num_workers)
+train_loader = DataLoader(train_dataset, shuffle=True, batch_size=1, num_workers=num_workers)
 
 # val_dataset = MRIDataset(data_list['val'], acceleration=acc, center_fraction=cen_fract, use_seed=seed)
 # val_loader = DataLoader(val_dataset, shuffle=True, batch_size=16, num_workers=num_workers)
 
-EPSILON = 0.01
+EPSILON = 0.001
+import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
     # printc(YELLOW)
@@ -96,16 +100,21 @@ if __name__ == "__main__":
     loss_list = list()
     acc_list = list()
     print("Starting training")
+    fig = plt.figure()
     for epoch in range(n_epochs):
-
         for i, sample in enumerate(train_loader):
+
             img_gt, img_und, rawdata_und, masks, norm = sample
+            # plt.subplot(1, 1, 1)
+            # plt.imshow(T.complex_abs(img_und).squeeze().numpy(), cmap='gray')
+            # plt.show()
 
             # img_in = F.interpolate(img_und, mode='bicubic', scale_factor=1).to(device)
 
-            img_in = img_und.transpose(-1, 1).unsqueeze(1).to(device)
-            print(img_in.shape)
-            img_in = T.root_sum_of_squares(img_in, 2)
+            # img_in = img_und.transpose(-1, 1).unsqueeze(1).to(device)
+            # print(img_in.shape)
+            # img_in = T.root_sum_of_squares(img_in, 2)
+            img_in = T.complex_abs(img_und).unsqueeze(0).to(device)
             # img_in = img_in.squeeze(1)
 
             print(f"img input shape: {img_in.shape}")
@@ -114,7 +123,7 @@ if __name__ == "__main__":
             optimiser.zero_grad()
             # img_gt = T.complex_center_crop(img_gt, (256, 256)).reshape(1, 1, 64, 320)
             print(img_gt.shape)
-            loss = - criterion(output, img_gt.to(device))
+            loss = - criterion(output, T.complex_abs(img_gt).unsqueeze(0).to(device))
             loss_list.append(- loss.item())
             loss.backward()
             optimiser.step()
