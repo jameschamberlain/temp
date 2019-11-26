@@ -36,9 +36,9 @@ class UNet(nn.Module):
         self.up_sample_layers += [ConvLayer(channels * 2, channels, self.drop_prob)]
 
         self.conv2 = nn.Sequential(
-            nn.Conv2d(channels, channels // 2, kernel_size=1, padding=1),
-            nn.Conv2d(channels // 2, self.c_out, kernel_size=1, padding=1),
-            nn.Conv2d(self.c_out, self.c_out, kernel_size=1, padding=1)
+            nn.Conv2d(channels, channels // 2, kernel_size=1, ),
+            nn.Conv2d(channels // 2, self.c_out, kernel_size=1),
+            nn.Conv2d(self.c_out, self.c_out, kernel_size=1)
         )
 
     def forward(self, x: Any, ):
@@ -56,6 +56,7 @@ class UNet(nn.Module):
         print("finished printing stack")
         for layer in self.up_sample_layers:
             y = F.interpolate(y, scale_factor=2, mode='bilinear', align_corners=False)
+            print("attempting cat")
             print(stack[-1].shape)
             print(y.shape)
             y = torch.cat([y, stack.pop()], dim=1)
