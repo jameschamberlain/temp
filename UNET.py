@@ -6,6 +6,7 @@ from torch import optim
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 
+import pytorch_ssim
 from layers.conv_layer import ConvLayer
 import torch
 import fastMRI.functions.transforms as T
@@ -28,10 +29,11 @@ class UNet(nn.Module):
             channels *= 2
 
         self.conv = nn.Sequential(
-            nn.Conv2d(c_in, c_out, kernel_size=3, padding=1),
-            nn.InstanceNorm2d(c_out),
+            nn.Conv2d(channels, channels, kernel_size=3, padding=1),
+            nn.InstanceNorm2d(channels),
             nn.ReLU(),
-            nn.Dropout2d(self.drop_probability))
+            nn.Dropout2d(self.drop_prob)
+        )
 
         self.up_sample_layers = nn.ModuleList()
         for _ in range(self.n_pool_layers - 1):
@@ -54,15 +56,15 @@ class UNet(nn.Module):
             y = F.max_pool2d(y, kernel_size=2)
 
         y = self.conv(y)
-        print("printing stack")
-        for each in stack:
-            print(each.shape)
-        print("finished printing stack")
+        # print("printing stack")
+        # for each in stack:
+        #     print(each.shape)
+        # print("finished printing stack")
         for layer in self.up_sample_layers:
             y = F.interpolate(y, scale_factor=2, mode='bilinear', align_corners=False)
-            print("attempting cat")
-            print(stack[-1].shape)
-            print(y.shape)
+            # print("attempting cat")
+            # print(stack[-1].shape)
+            # print(y.shape)
             y = torch.cat([y, stack.pop()], dim=1)
             y = layer(y)
 
@@ -97,8 +99,8 @@ if __name__ == "__main__":
     model = UNet(1, 1, 32).to(device)
     # printc(GREEN)
     print("constructed model\n")
-    criterion = nn.MSELoss()
-    # criterion = pytorch_ssim.SSIM()
+    # criterion = nn.MSELoss()
+    criterion = pytorch_ssim.SSIM()
     optimiser = optim.SGD(model.parameters(), lr=EPSILON)
     total_step = len(train_loader)
     n_epochs = 5
@@ -119,16 +121,16 @@ if __name__ == "__main__":
             # img_in = img_und.transpose(-1, 1).unsqueeze(1).to(device)
             # print(img_in.shape)
             # img_in = T.root_sum_of_squares(img_in, 2)
-            img_in = T.complex_abs(img_und).unsqueeze(0).to(device)
+            img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).to(device)
             # img_in = img_in.squeeze(1)
 
-            print(f"img input shape: {img_in.shape}")
+            # print(f"img input shape: {img_in.shape}")
 
-            output = model(img_in).squeeze(1)
+            output = model(img_in)
             optimiser.zero_grad()
             # img_gt = T.complex_center_crop(img_gt, (256, 256)).reshape(1, 1, 64, 320)
-            print(img_gt.shape)
-            loss = - criterion(output, T.complex_abs(img_gt).unsqueeze(0).to(device))
+            # print(img_gt.shape)
+            loss = - criterion(output, T.center_crop(T.complex_abs(img_gt).unsqueeze(0), [320, 320]).to(device))
             loss_list.append(- loss.item())
             loss.backward()
             optimiser.step()
@@ -137,4 +139,4 @@ if __name__ == "__main__":
                 print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'
                       .format(epoch + 1, n_epochs, i + 1, total_step, - loss.item()))
 
-        torch.save(model.state_dict(), f"./models/CNN-{epoch}")
+        torch.save(model.state_dict(), f"./models/UNET-{epoch}")
