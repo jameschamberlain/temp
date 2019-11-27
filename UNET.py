@@ -74,8 +74,8 @@ class UNet(nn.Module):
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
 # Load Data
-data_path_train = '/home/sam/datasets/FastMRI/NC2019MRI/train'
-data_path_val = '/home/sam/datasets/FastMRI/NC2019MRI/train'
+data_path_train = '/data/local/NC2019MRI/train'
+data_path_val = '/data/local/NC2019MRI/train'
 data_list = load_data_path(data_path_train, data_path_val)
 
 acc = 8

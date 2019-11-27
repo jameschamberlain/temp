@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 from utils.data_loader import MRIDataset, load_data_path, show_slices
 import fastMRI.functions.transforms as T
 import UNET
-data_path_train = '/home/sam/datasets/FastMRI/NC2019MRI/train'
-data_path_val = '/home/sam/datasets/FastMRI/NC2019MRI/train'
+data_path_train = '/data/local/NC2019MRI/train'
+data_path_val = '/data/local/NC2019MRI/train'
 data_list = load_data_path(data_path_train, data_path_val)
 
 acc = 8
