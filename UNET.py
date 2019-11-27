@@ -68,8 +68,8 @@ device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
 # Load Data
 print("Data loading...")
-data_path_train = '/data/local/NC2019MRI/train'
-data_path_val = '/data/local/NC2019MRI/train'
+data_path_train = '/home/sam/datasets/FastMRI/NC2019MRI/train'
+data_path_val = '/home/sam/datasets/FastMRI/NC2019MRI/train'
 data_list = load_data_path(data_path_train, data_path_val)
 
 acc = 8
@@ -79,7 +79,7 @@ num_workers = 8
 
 # create data loader for training set. It applies same to validation set as well
 train_dataset = MRIDataset(data_list['train'], acceleration=acc, center_fraction=cen_fract, use_seed=seed)
-train_loader = DataLoader(train_dataset, shuffle=True, batch_size=1, num_workers=num_workers)
+train_loader = DataLoader(train_dataset, shuffle=True, batch_size=1, num_workers=num_workers, drop_last=True)
 print("Data loaded")
 
 EPSILON = 0.001
@@ -91,19 +91,23 @@ if __name__ == "__main__":
     print("Constructed model")
     # criterion = nn.MSELoss()
     criterion = pytorch_ssim.SSIM()
-    #optimiser = optim.SGD(model.parameters(), lr=EPSILON)
+    # optimiser = optim.SGD(model.parameters(), lr=EPSILON)
     optimiser = optim.Adam(model.parameters(), lr=EPSILON)
     total_step = len(train_loader)
     n_epochs = 10
     loss_list = list()
     acc_list = list()
+    loss_avg = list()
+    loss_mins = list()
+    loss_maxs = list()
     print("Starting training")
     fig = plt.figure()
     for epoch in range(n_epochs):
+        loss_list = []
         for i, sample in enumerate(train_loader):
 
             img_gt, img_und, rawdata_und, masks, norm = sample
-            #print(img_und.shape)
+            # print(img_und.shape)
             # plt.subplot(1, 1, 1)
             # plt.imshow(T.complex_abs(img_und).squeeze().numpy(), cmap='gray')
             # plt.show()
@@ -113,8 +117,8 @@ if __name__ == "__main__":
             # img_in = img_und.transpose(-1, 1).unsqueeze(1).to(device)
             # print(img_in.shape)
             # img_in = T.root_sum_of_squares(img_in, 2)
-            img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).to(device)
-            #print(img_in.shape)
+            img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0).transpose(0, 1), [320, 320]).to(device)
+            # print(img_in.shape)
             # img_in = img_in.squeeze(1)
 
             # print(f"img input shape: {img_in.shape}")
@@ -123,7 +127,8 @@ if __name__ == "__main__":
             optimiser.zero_grad()
             # img_gt = T.complex_center_crop(img_gt, (256, 256)).reshape(1, 1, 64, 320)
             # print(img_gt.shape)
-            loss = - criterion(output, T.center_crop(T.complex_abs(img_gt).unsqueeze(0), [320, 320]).to(device))
+            loss = - criterion(output,
+                               T.center_crop(T.complex_abs(img_gt).unsqueeze(0).transpose(0, 1), [320, 320]).to(device))
             loss_list.append(- loss.item())
             loss.backward()
             optimiser.step()
@@ -132,10 +137,20 @@ if __name__ == "__main__":
                 print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'
                       .format(epoch + 1, n_epochs, i + 1, total_step, - loss.item()))
 
-        #torch.save(model.state_dict(), f"./models/UNET-{epoch}")
-    
+        # torch.save(model.state_dict(), f"./models/UNET-{epoch}")
+        min_loss = min(loss_list)
+        print("Minimum loss:", min_loss)
+        loss_mins.append(min_loss)
+        max_loss = max(loss_list)
+        print("Maximum loss:", max_loss)
+        loss_maxs.append(max_loss)
+        avg_loss = sum(loss_list) / len(loss_list)
+        print("Average loss:", avg_loss)
+        loss_avg.append(avg_loss)
+        plt.plot(range(0, total_step), loss_list, 'bx')
+        plt.show()
+        plt.plot(range(0, epoch+1), loss_maxs, 'r-')
+        plt.plot(range(0, epoch+1), loss_mins, 'b-')
+        plt.plot(range(0, epoch+1), loss_avg, 'y--')
+        plt.show()
     torch.save(model.state_dict(), f"./models/UNET-")
-    print("Minimum loss:", min(loss_list))
-    print("Maximum loss:", max(loss_list))
-    print("Average loss:", sum(loss_list) / len(loss_list))
-
