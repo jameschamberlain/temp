@@ -12,6 +12,9 @@ import torch
 import fastMRI.functions.transforms as T
 from utils.data_loader import load_data_path, MRIDataset
 
+import numpy as np
+import matplotlib.pyplot as plt
+
 
 class UNet(nn.Module):
 
@@ -69,8 +72,21 @@ device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 # Load Data
 print("Data loading...")
 data_path_train = '/data/local/NC2019MRI/train'
-data_path_val = '/data/local/NC2019MRI/train'
-data_list = load_data_path(data_path_train, data_path_val)
+data_list = load_data_path(data_path_train, data_path_train)
+
+# Split dataset into train-validate
+validation_split = 0.1
+dataset_len = len(data_list['train'])
+indices = list(range(dataset_len))
+
+# Randomly splitting indices:
+val_len = int(np.floor(validation_split * dataset_len))
+validation_idx = np.random.choice(indices, size=val_len, replace=False)
+train_idx = list(set(indices) - set(validation_idx))
+
+data_list_train = [data_list['train'][i] for i in train_idx]
+data_list_val = [data_list['val'][i] for i in validation_idx]
+
 
 acc = 8
 cen_fract = 0.04
@@ -78,12 +94,17 @@ seed = False  # random masks for each slice
 num_workers = 8
 
 # create data loader for training set. It applies same to validation set as well
-train_dataset = MRIDataset(data_list['train'], acceleration=acc, center_fraction=cen_fract, use_seed=seed)
-train_loader = DataLoader(train_dataset, shuffle=True, batch_size=20, num_workers=num_workers, drop_last=True)
+train_dataset = MRIDataset(data_list_train, acceleration=acc, center_fraction=cen_fract, use_seed=seed)
+train_loader = DataLoader(train_dataset, shuffle=True, batch_size=1, num_workers=num_workers)
+
+val_dataset = MRIDataset(data_list_val, acceleration=acc, center_fraction=cen_fract, use_seed=seed)
+val_loader = DataLoader(val_dataset, shuffle=True, batch_size=1, num_workers=num_workers)
+
+data_loaders = {"train": train_loader, "val": val_loader}
+data_lengths = {"train": len(train_idx), "val": val_len}
 print("Data loaded")
 
 EPSILON = 0.001
-import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
     print(device)
@@ -91,56 +112,63 @@ if __name__ == "__main__":
     print("Constructed model")
     # criterion = nn.MSELoss()
     criterion = pytorch_ssim.SSIM()
-    # optimiser = optim.SGD(model.parameters(), lr=EPSILON)
+    #optimiser = optim.SGD(model.parameters(), lr=EPSILON)
     optimiser = optim.Adam(model.parameters(), lr=EPSILON)
 
     total_step = len(train_loader)
     n_epochs = 10
     batch_loss = list()
     acc_list = list()
-    epoch_loss = []
+    train_loss = []
     print("Starting training")
     fig = plt.figure()
+
     for epoch in range(n_epochs):
         print('Epoch {}/{}'.format(epoch, n_epochs - 1))
         print('-' * 10)
-        
-        running_loss = 0.0
-        for i, sample in enumerate(train_loader):
 
-            img_gt, img_und, rawdata_und, masks, norm = sample
-            #print("img_und", img_und.shape)
-            # plt.subplot(1, 1, 1)
-            # plt.imshow(T.complex_abs(img_und).squeeze().numpy(), cmap='gray')
-            # plt.show()
+        # Each epoch has a training and validation phase
+        for phase in ['train', 'val']:
+            if phase == 'train':
+                model.train(True)  # Set model to training mode
+            else:
+                model.train(False)  # Set model to evaluate mode
 
-            img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).to(device)
+            running_loss = 0.0
 
-            output = model(img_in)
-            optimiser.zero_grad()
+            # Iterate over data.
+            for i, sample in enumerate(data_loaders[phase]):
+                # get the input data
+                img_gt, img_und, rawdata_und, masks, norm = sample
+                img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).to(device)
 
-            loss = - criterion(output, T.center_crop(T.complex_abs(img_gt).unsqueeze(0), [320, 320]).to(device))
-            loss.backward()
-            optimiser.step()
+                output = model(img_in)
+                optimiser.zero_grad()
 
-            # calculate loss
-            batch_loss.append(- loss.item())
-            running_loss += - loss.item() * img_in.size(0) 
+                loss = - criterion(output, T.center_crop(T.complex_abs(img_gt).unsqueeze(0), [320, 320]).to(device))
+                
+                # backward + optimise only if in training phase
+                if phase == 'train':
+                    loss.backward()
+                    optimiser.step()
 
-            #if (i + 1) % 50 == 0:
-                #print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'
-                      #.format(epoch + 1, n_epochs, i + 1, total_step, - loss.item()))
+                # calculate loss
+                batch_loss.append(- loss.item())
+                running_loss += - loss.item() * img_in.size(0) 
 
-        epoch_loss.append(running_loss / len(data_list['train']))
-        #torch.save(model.state_dict(), f"./models/UNET-{epoch}")
+            epoch_loss = running_loss / data_lengths[phase]
+            print('{} Loss: {:.4f}'.format(phase, epoch_loss))
+
+            if phase == 'train':
+                train_loss.append(epoch_loss)
     
-    torch.save(model.state_dict(), f"./models/UNET-10")
+    torch.save(model.state_dict(), f"./models/UNET-2")
     print("Minimum loss:", min(batch_loss))
     print("Maximum loss:", max(batch_loss))
     print("Average loss:", sum(batch_loss) / len(batch_loss))
 
-    print("Epoch loss: ", epoch_loss)
-    plt.plot(range(n_epochs), epoch_loss)
+    print("Epoch loss: ", train_loss)
+    plt.plot(range(n_epochs), train_loss)
     plt.show()
 
     
