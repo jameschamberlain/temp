@@ -68,8 +68,8 @@ device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
 # Load Data
 print("Data loading...")
-data_path_train = '/home/sam/datasets/FastMRI/NC2019MRI/train'
-data_path_val = '/home/sam/datasets/FastMRI/NC2019MRI/train'
+data_path_train = '/data/local/NC2019MRI/train'
+data_path_val = '/data/local/NC2019MRI/train'
 data_list = load_data_path(data_path_train, data_path_val)
 
 acc = 8
@@ -79,7 +79,7 @@ num_workers = 8
 
 # create data loader for training set. It applies same to validation set as well
 train_dataset = MRIDataset(data_list['train'], acceleration=acc, center_fraction=cen_fract, use_seed=seed)
-train_loader = DataLoader(train_dataset, shuffle=True, batch_size=1, num_workers=num_workers, drop_last=True)
+train_loader = DataLoader(train_dataset, shuffle=True, batch_size=20, num_workers=num_workers, drop_last=True)
 print("Data loaded")
 
 EPSILON = 0.001
