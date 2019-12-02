@@ -15,6 +15,8 @@ from utils.data_loader import load_data_path, MRIDataset
 import numpy as np
 import matplotlib.pyplot as plt
 
+import hyper_param
+
 
 class UNet(nn.Module):
 
@@ -23,8 +25,8 @@ class UNet(nn.Module):
         self.c_in = c_in
         self.c_out = c_out
         self.c = c
-        self.n_pool_layers = 4
-        self.drop_prob = 0
+        self.n_pool_layers = hyper_param.POOL_LAYERS
+        self.drop_prob = hyper_param.DROPOUT
         self.down_sample_layers = nn.ModuleList([ConvLayer(self.c_in, self.c, self.drop_prob)])
         channels = self.c
         for _ in range(self.n_pool_layers - 1):
@@ -88,14 +90,14 @@ data_list_train = [data_list['train'][i] for i in train_idx]
 data_list_val = [data_list['val'][i] for i in validation_idx]
 
 
-acc = 8
+acc = hyper_param.N_FOLD
 cen_fract = 0.04
 seed = False  # random masks for each slice
 num_workers = 8
 
 # create data loader for training set. It applies same to validation set as well
 train_dataset = MRIDataset(data_list_train, acceleration=acc, center_fraction=cen_fract, use_seed=seed)
-train_loader = DataLoader(train_dataset, shuffle=True, batch_size=1, num_workers=num_workers)
+train_loader = DataLoader(train_dataset, shuffle=True, batch_size=hyper_param.BATCH_SIZE, num_workers=num_workers)
 
 val_dataset = MRIDataset(data_list_val, acceleration=acc, center_fraction=cen_fract, use_seed=seed)
 val_loader = DataLoader(val_dataset, shuffle=True, batch_size=1, num_workers=num_workers)
@@ -104,28 +106,32 @@ data_loaders = {"train": train_loader, "val": val_loader}
 data_lengths = {"train": len(train_idx), "val": val_len}
 print("Data loaded")
 
-EPSILON = 0.001
 
 if __name__ == "__main__":
     print(device)
-    model = UNet(1, 1, 32).to(device)
+    model = UNet(1, 1, hyper_param.CHANNELS).to(device)
     print("Constructed model")
     # criterion = nn.MSELoss()
     criterion = pytorch_ssim.SSIM()
     #optimiser = optim.SGD(model.parameters(), lr=EPSILON)
-    optimiser = optim.Adam(model.parameters(), lr=EPSILON)
+    optimiser = optim.Adam(model.parameters(), lr=hyper_param.EPSILON)
 
     total_step = len(train_loader)
-    n_epochs = 10
-    batch_loss = list()
-    acc_list = list()
+    n_epochs = hyper_param.N_EPOCHS
+    batch_loss = []
     train_loss = []
-    print("Starting training")
-    fig = plt.figure()
+    val_loss = []
 
+    print("Starting training")
+    model.train()
     for epoch in range(n_epochs):
         print('Epoch {}/{}'.format(epoch, n_epochs - 1))
         print('-' * 10)
+
+        if(epoch == 40):
+            # Reduce learning rate
+            for g in optimiser.param_groups:
+                g['lr'] = hyper_param.EPSILON * 0.1
 
         # Each epoch has a training and validation phase
         for phase in ['train', 'val']:
@@ -138,7 +144,6 @@ if __name__ == "__main__":
 
             # Iterate over data.
             for i, sample in enumerate(data_loaders[phase]):
-                # get the input data
                 img_gt, img_und, rawdata_und, masks, norm = sample
                 img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).to(device)
 
@@ -161,15 +166,20 @@ if __name__ == "__main__":
 
             if phase == 'train':
                 train_loss.append(epoch_loss)
+            else:
+                val_loss.append(epoch_loss)
     
-    torch.save(model.state_dict(), f"./models/UNET-2")
+    # Print stats
     print("Minimum loss:", min(batch_loss))
     print("Maximum loss:", max(batch_loss))
     print("Average loss:", sum(batch_loss) / len(batch_loss))
 
-    print("Epoch loss: ", train_loss)
+    print("Train loss: ", train_loss)
+    print("Val loss: ", val_loss)
+    fig = plt.figure()
     plt.plot(range(n_epochs), train_loss)
-    plt.show()
+    plt.plot(range(n_epochs), val_loss)
+    plt.savefig(f'diagrams/UNET_2-{hyper_param.DESCR}.png')
 
-    
-
+    # save model
+    torch.save(model.state_dict(), f"./models/UNET_2-{hyper_param.DESCR}")

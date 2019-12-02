@@ -2,15 +2,18 @@ from typing import Any
 from PIL import Image
 import torchvision as tv
 import torch.nn as nn
+import torch
 from torch import optim
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 
 import pytorch_ssim
 from layers.conv_layer import ConvLayer
-import torch
 import fastMRI.functions.transforms as T
 from utils.data_loader import load_data_path, MRIDataset
+import matplotlib.pyplot as plt
+
+import hyper_param
 
 
 class UNet(nn.Module):
@@ -20,8 +23,8 @@ class UNet(nn.Module):
         self.c_in = c_in
         self.c_out = c_out
         self.c = c
-        self.n_pool_layers = 4
-        self.drop_prob = 0
+        self.n_pool_layers = hyper_param.POOL_LAYERS
+        self.drop_prob = hyper_param.DROPOUT
         self.down_sample_layers = nn.ModuleList([ConvLayer(self.c_in, self.c, self.drop_prob)])
         channels = self.c
         for _ in range(self.n_pool_layers - 1):
@@ -72,48 +75,39 @@ data_path_train = '/data/local/NC2019MRI/train'
 data_path_val = '/data/local/NC2019MRI/train'
 data_list = load_data_path(data_path_train, data_path_val)
 
-acc = 8
+acc = hyper_param.N_FOLD
 cen_fract = 0.04
 seed = False  # random masks for each slice
 num_workers = 8
 
 # create data loader for training set. It applies same to validation set as well
 train_dataset = MRIDataset(data_list['train'], acceleration=acc, center_fraction=cen_fract, use_seed=seed)
-train_loader = DataLoader(train_dataset, shuffle=True, batch_size=1, num_workers=num_workers)
+train_loader = DataLoader(train_dataset, shuffle=True, batch_size=hyper_param.BATCH_SIZE, num_workers=num_workers)
 print("Data loaded")
 
-EPSILON = 0.001
-import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
     print(device)
-    model = UNet(1, 1, 32).to(device)
+    model = UNet(1, 1, hyper_param.CHANNELS).to(device)
     print("Constructed model")
     # criterion = nn.MSELoss()
     criterion = pytorch_ssim.SSIM()
     #optimiser = optim.SGD(model.parameters(), lr=EPSILON)
-    optimiser = optim.Adam(model.parameters(), lr=EPSILON)
+    optimiser = optim.Adam(model.parameters(), lr=hyper_param.EPSILON)
 
     total_step = len(train_loader)
-    n_epochs = 10
-    batch_loss = list()
-    acc_list = list()
+    batch_loss = []
     epoch_loss = []
+    n_epochs = hyper_param.N_EPOCHS
     print("Starting training")
-    fig = plt.figure()
+    model.train()
     for epoch in range(n_epochs):
-        print('Epoch {}/{}'.format(epoch, n_epochs - 1))
-        print('-' * 10)
+        #print('Epoch {}/{}'.format(epoch, n_epochs - 1))
+        #print('-' * 10)
         
         running_loss = 0.0
         for i, sample in enumerate(train_loader):
-
             img_gt, img_und, rawdata_und, masks, norm = sample
-            #print("img_und", img_und.shape)
-            # plt.subplot(1, 1, 1)
-            # plt.imshow(T.complex_abs(img_und).squeeze().numpy(), cmap='gray')
-            # plt.show()
-
             img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).to(device)
 
             output = model(img_in)
@@ -127,21 +121,25 @@ if __name__ == "__main__":
             batch_loss.append(- loss.item())
             running_loss += - loss.item() * img_in.size(0) 
 
-            #if (i + 1) % 50 == 0:
-                #print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'
-                      #.format(epoch + 1, n_epochs, i + 1, total_step, - loss.item()))
+            if (i + 1) % 50 == 0:
+                print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'
+                      .format(epoch + 1, n_epochs, i + 1, total_step, - loss.item()))
 
         epoch_loss.append(running_loss / len(data_list['train']))
         #torch.save(model.state_dict(), f"./models/UNET-{epoch}")
     
-    torch.save(model.state_dict(), f"./models/UNET-10")
+    # Print stats
     print("Minimum loss:", min(batch_loss))
     print("Maximum loss:", max(batch_loss))
     print("Average loss:", sum(batch_loss) / len(batch_loss))
 
     print("Epoch loss: ", epoch_loss)
+    fig = plt.figure()
     plt.plot(range(n_epochs), epoch_loss)
-    plt.show()
+    plt.savefig(f'diagrams/UNET-{hyper_param.DESCR}.png')
+
+    # save model
+    torch.save(model.state_dict(), f"models/UNET-{hyper_param.DESCR}")
 
     
 
