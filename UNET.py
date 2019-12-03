@@ -79,7 +79,7 @@ num_workers = 8
 
 # create data loader for training set. It applies same to validation set as well
 train_dataset = MRIDataset(data_list['train'], acceleration=acc, center_fraction=cen_fract, use_seed=seed)
-train_loader = DataLoader(train_dataset, shuffle=True, batch_size=1, num_workers=num_workers, drop_last=True)
+train_loader = DataLoader(train_dataset, shuffle=True, batch_size=10, num_workers=num_workers, drop_last=True)
 print("Data loaded")
 
 EPSILON = 0.001
@@ -108,9 +108,9 @@ if __name__ == "__main__":
         running_loss = 0.0
         for i, sample in enumerate(train_loader):
             img_gt, img_und, rawdata_und, masks, norm = sample
-            plt.subplot(1, 1, 1)
-            plt.imshow(T.complex_abs(img_und).squeeze().numpy(), cmap='gray')
-            plt.show()
+          #  plt.subplot(1, 1, 1)
+          #  plt.imshow(T.complex_abs(img_und).squeeze().numpy(), cmap='gray')
+          #  plt.show()
 
             img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).transpose(0, 1).to(device)
             
@@ -133,7 +133,7 @@ if __name__ == "__main__":
         epoch_loss.append(running_loss / len(data_list['train']))
         # torch.save(model.state_dict(), f"./models/UNET-{epoch}")
     
-    # torch.save(model.state_dict(), f"./models/UNET-10")
+    torch.save(model.state_dict(), f"./models/UNET-10")
     print("Minimum loss:", min(batch_loss))
     print("Maximum loss:", max(batch_loss))
     print("Average loss:", sum(batch_loss) / len(batch_loss))

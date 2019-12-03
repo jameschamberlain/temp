@@ -21,13 +21,13 @@ val_loader = DataLoader(val_dataset, shuffle=True, batch_size=1, num_workers=num
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
 model = UNET.UNet(1,1,32).to(device)
-model.load_state_dict(torch.load("./models/UNET-"))
+model.load_state_dict(torch.load("./models/UNET-10"))
 model.eval()
 fig = plt.figure()
 
 for i, sample in enumerate(val_loader):
     img_gt, img_und, rawdata_und, masks, norm = sample
-    img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).to(device)
+    img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).transpose(0,1).to(device)
 
     # input
     A = T.center_crop(T.complex_abs(img_und), [320, 320]).squeeze()
