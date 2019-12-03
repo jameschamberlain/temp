@@ -72,17 +72,20 @@ def get_epoch_batch(subject_id, acc, center_fract, use_seed=True):
     # # img_und = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320])
     img_und = temp
 
-    temp[0,:,:,0] = T.center_crop(img_gt[0,:,:,0], [320, 320])
-    temp[0,:,:,1] = T.center_crop(img_gt[0,:,:,1], [320, 320])
-    img_gt = temp
+    temp2 = torch.Tensor(1, 320, 320, 2) 
+    temp2[0,:,:,0] = T.center_crop(img_gt[0,:,:,0], [320, 320])
+    temp2[0,:,:,1] = T.center_crop(img_gt[0,:,:,1], [320, 320])
+    img_gt = temp2
 
-    temp[0,:,:,0] = T.center_crop(rawdata_und[0,:,:,0], [320, 320])
-    temp[0,:,:,1] = T.center_crop(rawdata_und[0,:,:,1], [320, 320])
-    rawdata_und = temp
+    temp3 = torch.Tensor(1, 320, 320, 2) 
+    temp3[0,:,:,0] = T.center_crop(rawdata_und[0,:,:,0], [320, 320])
+    temp3[0,:,:,1] = T.center_crop(rawdata_und[0,:,:,1], [320, 320])
+    rawdata_und = temp3
 
-    temp[0,:,:,0] = T.center_crop(masks[0,:,:,0], [320, 320])
-    temp[0,:,:,1] = T.center_crop(masks[0,:,:,1], [320, 320])
-    masks = temp
+    temp4 = torch.Tensor(1, 320, 320, 2) 
+    temp4[0,:,:,0] = T.center_crop(masks[0,:,:,0], [320, 320])
+    temp4[0,:,:,1] = T.center_crop(masks[0,:,:,1], [320, 320])
+    masks = temp4
     # print("img_und:", img_und.squeeze(0).shape)
     # print("img_gt:", img_gt.squeeze(0).shape)
     # print("rawdata_und:", rawdata_und.squeeze(0).shape)
