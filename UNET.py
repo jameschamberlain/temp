@@ -79,7 +79,7 @@ num_workers = 8
 
 # create data loader for training set. It applies same to validation set as well
 train_dataset = MRIDataset(data_list['train'], acceleration=acc, center_fraction=cen_fract, use_seed=seed)
-train_loader = DataLoader(train_dataset, shuffle=True, batch_size=100, num_workers=num_workers, drop_last=True)
+train_loader = DataLoader(train_dataset, shuffle=True, batch_size=10, num_workers=num_workers, drop_last=True)
 print("Data loaded")
 
 EPSILON = 0.001
@@ -87,7 +87,7 @@ import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
     print(device)
-    model = UNet(100, 100, 32).to(device)
+    model = UNet(1, 1, 32).to(device)
     print("Constructed model")
     # criterion = nn.MSELoss()
     criterion = pytorch_ssim.SSIM()
@@ -112,12 +112,13 @@ if __name__ == "__main__":
             # plt.imshow(T.complex_abs(img_und).squeeze().numpy(), cmap='gray')
             # plt.show()
 
-            img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).to(device)
+            img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).transpose(0, 1).to(device)
+            
 
             output = model(img_in)
             optimiser.zero_grad()
 
-            loss = - criterion(output, T.center_crop(T.complex_abs(img_gt).unsqueeze(0), [320, 320]).to(device))
+            loss = - criterion(output, T.center_crop(T.complex_abs(img_gt).unsqueeze(0), [320, 320]).transpose(0, 1).to(device))
             loss.backward()
             optimiser.step()
 
@@ -130,9 +131,9 @@ if __name__ == "__main__":
                       #.format(epoch + 1, n_epochs, i + 1, total_step, - loss.item()))
 
         epoch_loss.append(running_loss / len(data_list['train']))
-        #torch.save(model.state_dict(), f"./models/UNET-{epoch}")
+        # torch.save(model.state_dict(), f"./models/UNET-{epoch}")
     
-    # torch.save(model.state_dict(), f"./models/UNET-10")
+    torch.save(model.state_dict(), f"./models/UNET-10")
     print("Minimum loss:", min(batch_loss))
     print("Maximum loss:", max(batch_loss))
     print("Average loss:", sum(batch_loss) / len(batch_loss))
