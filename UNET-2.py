@@ -1,3 +1,4 @@
+from random import randint
 from typing import Any
 from PIL import Image
 import torchvision as tv
@@ -15,7 +16,8 @@ from utils.data_loader import load_data_path, MRIDataset
 import numpy as np
 import matplotlib.pyplot as plt
 import hyper_param
-import ray
+# import ray
+from ray import tune
 
 
 class UNet(nn.Module):
@@ -70,18 +72,22 @@ class UNet(nn.Module):
 
 
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+# cuda_devices = ray.utils.get_cuda_visible_devices()
+# if not cuda_devices:
+#     print("Ray detects {}".format(cuda_devices))
+#     raise Exception("No GPU devices allocated by Ray!")
 
-ray.init()
+# ray.init()
 
 # The number of sets of random hyperparameters to try.
-num_evaluations = 3 
+num_evaluations = 3
 
 
 # A function for generating random hyperparameters.
 def generate_hyperparameters():
     return {
-        "learning_rate": 10 ** np.random.uniform(-5, 1),
-        "batch_size": np.random.randint(1, 100),
+        "learning_rate": tune.grid_search([0.001, 0.01, 0.1]),
+        "batch_size": tune.grid_search([randint(0, 15) for _ in range(3)])
     }
 
 
@@ -93,7 +99,8 @@ num_workers = 4
 
 def get_data_loaders(batch_size):
     print("Data loading...")
-    data_path_train = '/data/local/NC2019MRI/train'
+    # data_path_train = '/data/local/NC2019MRI/train'
+    data_path_train = '/home/sam/datasets/FastMRI/NC2019MRI/train'
     data_list = load_data_path(data_path_train, data_path_train)
 
     # Split dataset into train-validate
@@ -126,12 +133,13 @@ def train(model, optimiser, criterion, train_loader):
 
     for i, sample in enumerate(train_loader):
         img_gt, img_und, _, _, _ = sample
-        img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0).transpose_(0,1), [320, 320])
+        img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0).transpose(0, 1), [320, 320])
 
         output = model(img_in)
         optimiser.zero_grad()
 
-        loss = - criterion(output, T.center_crop(T.complex_abs(img_gt).unsqueeze(0).transpose_(0,1), [320, 320]))
+        loss = - criterion(output,
+                           T.center_crop(T.complex_abs(img_gt).unsqueeze(0).transpose(0, 1), [320, 320]))
         loss.backward()
         optimiser.step()
 
@@ -142,38 +150,37 @@ def test(model, test_loader):
     with torch.no_grad():
         for i, sample in enumerate(test_loader):
             img_gt, img_und, _, _, _ = sample
-            img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320])
+            img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).transpose(0, 1)
 
             output = model(img_in)
 
-            real = T.center_crop(T.complex_abs(img_gt).unsqueeze(0), [320, 320])
+            real = T.center_crop(T.complex_abs(img_gt).unsqueeze(0), [320, 320]).transpose(0, 1)
 
             loss = - pytorch_ssim.ssim(output, real)
             total_loss.append(- loss.item())
 
             # TODO evaluate model
-            #_, predicted = torch.max(outputs.data, 1)
-            #total += target.size(0)
-            #correct += (predicted == target).sum().item()
-    
-    return sum(total_loss)/len(total_loss) 
+            # _, predicted = torch.max(outputs.data, 1)
+            # total += target.size(0)
+            # correct += (predicted == target).sum().item()
+
+    return sum(total_loss) / len(total_loss)
 
 
-
-@ray.remote
+# @ray.remote
 def evaluate_hyperparameters(config):
     print("Constructed model")
-    model = UNet(1, 1, hyper_param.CHANNELS)
+    model = UNet(1, 1, hyper_param.CHANNELS).cuda()
     train_loader, val_loader = get_data_loaders(config["batch_size"])
 
     criterion = pytorch_ssim.SSIM()
-    
+
     # criterion = nn.MSELoss()
     optimiser = optim.Adam(model.parameters(), lr=config["learning_rate"])
     # optimizer = optim.SGD(
     #    model.parameters(),
     #    lr=config["learning_rate"],
-    #    momentum=config["momentum"])
+    #    momentum=config["momentum"]).cuda()
     train(model, optimiser, criterion, train_loader)
     return test(model, val_loader)
 
@@ -190,39 +197,39 @@ if __name__ == "__main__":
     # A dictionary mapping an experiment's object ID to its hyperparameters.
     # hyerparameters used for that experiment.
     hyperparameters_mapping = {}
-
+    analysis = tune.run(evaluate_hyperparameters, config=generate_hyperparameters())
     # Randomly generate sets of hyperparameters and launch a task to evaluate it.
-    for i in range(num_evaluations):
-        hyperparameters = generate_hyperparameters()
-        accuracy_id = evaluate_hyperparameters.remote(hyperparameters)
-        remaining_ids.append(accuracy_id)
-        hyperparameters_mapping[accuracy_id] = hyperparameters
-
-    # Fetch and print the results of the tasks in the order that they complete.
-    while remaining_ids:
-        # Use ray.wait to get the object ID of the first task that completes.
-        done_ids, remaining_ids = ray.wait(remaining_ids)
-        # There is only one return result by default.
-        result_id = done_ids[0]
-
-        hyperparameters = hyperparameters_mapping[result_id]
-        accuracy = ray.get(result_id)
-        print("""We achieve accuracy {:.3}% with
-            learning_rate: {:.2}
-            batch_size: {}
-            momentum: {:.2}
-        """.format(100 * accuracy, hyperparameters["learning_rate"],
-                   hyperparameters["batch_size"], hyperparameters["momentum"]))
-        if accuracy > best_accuracy:
-            best_hyperparameters = hyperparameters
-            best_accuracy = accuracy
-
-    # Record the best performing set of hyperparameters.
-    print("""Best accuracy over {} trials was {:.3} with
-        learning_rate: {:.2}
-        batch_size: {}
-        momentum: {:.2}
-        """.format(num_evaluations, 100 * best_accuracy,
-                   best_hyperparameters["learning_rate"],
-                   best_hyperparameters["batch_size"],
-                   best_hyperparameters["momentum"]))
+    # for i in range(num_evaluations):
+    #     hyperparameters = generate_hyperparameters()
+    #     accuracy_id = evaluate_hyperparameters.remote(hyperparameters)
+    #     remaining_ids.append(accuracy_id)
+    #     hyperparameters_mapping[accuracy_id] = hyperparameters
+    #
+    # # Fetch and print the results of the tasks in the order that they complete.
+    # while remaining_ids:
+    #     # Use ray.wait to get the object ID of the first task that completes.
+    #     done_ids, remaining_ids = ray.wait(remaining_ids)
+    #     # There is only one return result by default.
+    #     result_id = done_ids[0]
+    #
+    #     hyperparameters = hyperparameters_mapping[result_id]
+    #     accuracy = ray.get(result_id)
+    #     print("""We achieve accuracy {:.3}% with
+    #         learning_rate: {:.2}
+    #         batch_size: {}
+    #         momentum: {:.2}
+    #     """.format(100 * accuracy, hyperparameters["learning_rate"],
+    #                hyperparameters["batch_size"], hyperparameters["momentum"]))
+    #     if accuracy > best_accuracy:
+    #         best_hyperparameters = hyperparameters
+    #         best_accuracy = accuracy
+    #
+    # # Record the best performing set of hyperparameters.
+    # print("""Best accuracy over {} trials was {:.3} with
+    #     learning_rate: {:.2}
+    #     batch_size: {}
+    #     momentum: {:.2}
+    #     """.format(num_evaluations, 100 * best_accuracy,
+    #                best_hyperparameters["learning_rate"],
+    #                best_hyperparameters["batch_size"],
+    #                best_hyperparameters["momentum"]))

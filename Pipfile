@@ -18,6 +18,8 @@ ray = {extras = ["tune"],version = "*"}
 psutil = "*"
 setproctitle = "*"
 filelock = "*"
+requests = "*"
+tensorflow = "*"
 
 [requires]
 python_version = "3.7"

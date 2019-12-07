@@ -1,5 +1,5 @@
 '''-----Hyperparameters-----'''
-CHANNELS = 128 #[32,64,128,265]
+CHANNELS = 32 #[32,64,128,265]
 POOL_LAYERS = 4
 BATCH_SIZE = 1
 DROPOUT = 0.5 #(0.5-0.8)
