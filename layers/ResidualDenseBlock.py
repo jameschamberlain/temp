@@ -15,7 +15,7 @@ class RDB(nn.Module):
         intermediate_channels = channels
         for _ in range(0,depth):
             self.dense_layers.append(nn.Conv2d(in_channels=intermediate_channels,out_channels=growth_rate,kernel_size=mask_size,bias=True))
-            self.intermediate_channels += channels
+            intermediate_channels += channels
 
         self.conv1x1 = nn.Conv2d(in_channels=self.depth, out_channels=growth_rate, kernel_size=1, stride=1, bias=False)
 
