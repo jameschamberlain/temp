@@ -6,8 +6,8 @@ from utils.data_loader import MRIDataset, load_data_path, show_slices
 import fastMRI.functions.transforms as T
 import UNET
 
-data_path_train = '/data/local/NC2019MRI/train'
-data_path_val = '/data/local/NC2019MRI/train'
+data_path_train = '/home/sam/datasets/FastMRI/NC2019MRI/train'
+data_path_val = '/home/sam/datasets/FastMRI/NC2019MRI/train'
 data_list = load_data_path(data_path_train, data_path_val)
 
 acc = 8
@@ -20,8 +20,8 @@ val_loader = DataLoader(val_dataset, shuffle=True, batch_size=1, num_workers=num
 
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
-model = UNET.UNet(1,1,32).to(device)
-model.load_state_dict(torch.load("./models/UNET-Adam10"))
+model = UNET.UNet(1, 1, 32).to(device)
+model.load_state_dict(torch.load("./models/UNET-"))
 model.eval()
 fig = plt.figure()
 
@@ -32,13 +32,13 @@ for i, sample in enumerate(val_loader):
     # input
     A = T.center_crop(T.complex_abs(img_und), [320, 320]).squeeze()
     print(A.shape)
-    
+
     # output
     output = model(img_in)
     print(output.shape)
     B = output.squeeze().cpu()
     print(B.shape)
-    
+
     # real
     C = T.center_crop(T.complex_abs(img_gt), [320, 320]).squeeze()
     print(C.shape)

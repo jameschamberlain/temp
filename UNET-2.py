@@ -14,8 +14,8 @@ from utils.data_loader import load_data_path, MRIDataset
 
 import numpy as np
 import matplotlib.pyplot as plt
-
 import hyper_param
+import ray
 
 
 class UNet(nn.Module):
@@ -68,7 +68,8 @@ class UNet(nn.Module):
 
         return self.conv2(y)
 
-device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+
+# device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
 ray.init()
 
@@ -79,18 +80,20 @@ num_evaluations = 10
 # A function for generating random hyperparameters.
 def generate_hyperparameters():
     return {
-        "learning_rate": 10**np.random.uniform(-5, 1),
+        "learning_rate": 10 ** np.random.uniform(-5, 1),
         "batch_size": np.random.randint(1, 100),
     }
+
 
 acc = hyper_param.N_FOLD
 cen_fract = 0.04
 seed = False  # random masks for each slice
-num_workers = 8
+num_workers = 4
+
 
 def get_data_loaders(batch_size):
     print("Data loading...")
-    data_path_train = '/data/local/NC2019MRI/train'
+    data_path_train = '/home/sam/datasets/FastMRI/NC2019MRI/train'
     data_list = load_data_path(data_path_train, data_path_train)
 
     # Split dataset into train-validate
@@ -116,20 +119,22 @@ def get_data_loaders(batch_size):
 
     return train_loader, val_loader
 
+
 def train(model, optimiser, criterion, train_loader):
     print("Starting training")
     model.train()
-    
+
     for i, sample in enumerate(train_loader):
-            img_gt, img_und, _, _, _ = sample
-            img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).to(device)
+        img_gt, img_und, _, _, _ = sample
+        img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0).transpose_(0,1), [320, 320])
 
-            output = model(img_in)
-            optimiser.zero_grad()
+        output = model(img_in)
+        optimiser.zero_grad()
 
-            loss = - criterion(output, T.center_crop(T.complex_abs(img_gt).unsqueeze(0), [320, 320]).to(device))
-            loss.backward()
-            optimiser.step()
+        loss = - criterion(output, T.center_crop(T.complex_abs(img_gt).unsqueeze(0).transpose_(0,1), [320, 320]))
+        loss.backward()
+        optimiser.step()
+
 
 def test(model, test_loader):
     model.eval()
@@ -138,29 +143,30 @@ def test(model, test_loader):
     with torch.no_grad():
         for i, sample in enumerate(test_loader):
             img_gt, img_und, _, _, _ = sample
-            img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).to(device)
+            img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320])
 
             output = model(img_in)
 
             real = T.center_crop(T.complex_abs(img_gt), [320, 320]).squeeze()
 
             # TODO evaluate model
-            #_, predicted = torch.max(outputs.data, 1)
-            #total += target.size(0)
-            #correct += (predicted == target).sum().item()
+            # _, predicted = torch.max(outputs.data, 1)
+            # total += target.size(0)
+            # correct += (predicted == target).sum().item()
 
     return correct / total
+
 
 @ray.remote
 def evaluate_hyperparameters(config):
     print("Constructed model")
-    model = UNet(1, 1, hyper_param.CHANNELS).to(device)
+    model = UNet(1, 1, hyper_param.CHANNELS)
     train_loader, val_loader = get_data_loaders(config["batch_size"])
 
     criterion = pytorch_ssim.SSIM()
     # criterion = nn.MSELoss()
     optimiser = optim.Adam(model.parameters(), lr=config["learning_rate"])
-    #optimizer = optim.SGD(
+    # optimizer = optim.SGD(
     #    model.parameters(),
     #    lr=config["learning_rate"],
     #    momentum=config["momentum"])
@@ -169,7 +175,7 @@ def evaluate_hyperparameters(config):
 
 
 if __name__ == "__main__":
-    print(device)
+    # print(device)
 
     # Keep track of the best hyperparameters and the best accuracy.
     best_hyperparameters = None
@@ -202,7 +208,7 @@ if __name__ == "__main__":
             batch_size: {}
             momentum: {:.2}
         """.format(100 * accuracy, hyperparameters["learning_rate"],
-                    hyperparameters["batch_size"], hyperparameters["momentum"]))
+                   hyperparameters["batch_size"], hyperparameters["momentum"]))
         if accuracy > best_accuracy:
             best_hyperparameters = hyperparameters
             best_accuracy = accuracy
@@ -213,6 +219,6 @@ if __name__ == "__main__":
         batch_size: {}
         momentum: {:.2}
         """.format(num_evaluations, 100 * best_accuracy,
-                    best_hyperparameters["learning_rate"],
-                    best_hyperparameters["batch_size"],
-                    best_hyperparameters["momentum"]))
+                   best_hyperparameters["learning_rate"],
+                   best_hyperparameters["batch_size"],
+                   best_hyperparameters["momentum"]))
