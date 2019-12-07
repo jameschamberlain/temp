@@ -91,5 +91,5 @@ def load_data_path(train_data_path, val_data_path):
 
             # the first 5 slices are mostly noise so it is better to exlude them
             data_list[train_and_val[i]] += [(fname, subject_data_path, slice) for slice in range(5, num_slice)]
-
+    
     return data_list
