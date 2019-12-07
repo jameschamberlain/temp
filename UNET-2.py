@@ -69,12 +69,12 @@ class UNet(nn.Module):
         return self.conv2(y)
 
 
-# device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
 ray.init()
 
 # The number of sets of random hyperparameters to try.
-num_evaluations = 10
+num_evaluations = 3 
 
 
 # A function for generating random hyperparameters.
@@ -93,7 +93,7 @@ num_workers = 4
 
 def get_data_loaders(batch_size):
     print("Data loading...")
-    data_path_train = '/home/sam/datasets/FastMRI/NC2019MRI/train'
+    data_path_train = '/data/local/NC2019MRI/train'
     data_list = load_data_path(data_path_train, data_path_train)
 
     # Split dataset into train-validate
@@ -146,7 +146,7 @@ def test(model, test_loader):
 
             output = model(img_in)
 
-            real = T.center_crop(T.complex_abs(img_gt).unsqueeze(0), [320, 320]).to(device)
+            real = T.center_crop(T.complex_abs(img_gt).unsqueeze(0), [320, 320])
 
             loss = - pytorch_ssim.ssim(output, real)
             total_loss.append(- loss.item())
