@@ -3,6 +3,7 @@ from PIL import Image
 import torchvision as tv
 import torch.nn as nn
 from torch import optim
+from torch.autograd import Variable
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 
@@ -24,7 +25,7 @@ class UNet(nn.Module):
         self.c_out = c_out
         self.c = c
         self.n_pool_layers = 4
-        self.drop_prob = 0
+        self.drop_prob = 0.2
         self.down_sample_layers = nn.ModuleList([ConvLayer(self.c_in, self.c, self.drop_prob)])
         channels = self.c
         for _ in range(self.n_pool_layers - 1):
@@ -71,7 +72,8 @@ device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
 # Load Data
 print("Data loading...")
-data_path_train = '/data/local/NC2019MRI/train'
+# data_path_train = '/data/local/NC2019MRI/train'
+data_path_train = '/home/sam/datasets/FastMRI/NC2019MRI/train'
 data_list = load_data_path(data_path_train, data_path_train)
 
 # Split dataset into train-validate
@@ -87,7 +89,6 @@ train_idx = list(set(indices) - set(validation_idx))
 data_list_train = [data_list['train'][i] for i in train_idx]
 data_list_val = [data_list['val'][i] for i in validation_idx]
 
-
 acc = 8
 cen_fract = 0.04
 seed = False  # random masks for each slice
@@ -95,10 +96,10 @@ num_workers = 8
 
 # create data loader for training set. It applies same to validation set as well
 train_dataset = MRIDataset(data_list_train, acceleration=acc, center_fraction=cen_fract, use_seed=seed)
-train_loader = DataLoader(train_dataset, shuffle=True, batch_size=1, num_workers=num_workers)
+train_loader = DataLoader(train_dataset, shuffle=True, batch_size=8, num_workers=num_workers)
 
 val_dataset = MRIDataset(data_list_val, acceleration=acc, center_fraction=cen_fract, use_seed=seed)
-val_loader = DataLoader(val_dataset, shuffle=True, batch_size=1, num_workers=num_workers)
+val_loader = DataLoader(val_dataset, shuffle=True, batch_size=8, num_workers=num_workers)
 
 data_loaders = {"train": train_loader, "val": val_loader}
 data_lengths = {"train": len(train_idx), "val": val_len}
@@ -112,7 +113,7 @@ if __name__ == "__main__":
     print("Constructed model")
     # criterion = nn.MSELoss()
     criterion = pytorch_ssim.SSIM()
-    #optimiser = optim.SGD(model.parameters(), lr=EPSILON)
+    # optimiser = optim.SGD(model.parameters(), lr=EPSILON)
     optimiser = optim.Adam(model.parameters(), lr=EPSILON)
 
     total_step = len(train_loader)
@@ -140,13 +141,34 @@ if __name__ == "__main__":
             for i, sample in enumerate(data_loaders[phase]):
                 # get the input data
                 img_gt, img_und, rawdata_und, masks, norm = sample
-                img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).to(device)
-
+                # print(1)
+                img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).transpose_(0, 1)
+                img_in = Variable(torch.FloatTensor(img_in)).cuda()
+                # print(2)
+                ground_truth = T.center_crop(T.complex_abs(img_gt).unsqueeze(0), [320, 320]).transpose_(0, 1)
+                ground_truth = Variable(torch.FloatTensor(ground_truth)).cuda()
                 output = model(img_in)
-                optimiser.zero_grad()
+                # print(3)
+                final = output
+                ground_truth = ground_truth
+                # print(4)
+                loss = []
+                # print(final.shape)
+                for b in range(list(final.size())[0]):
+                    # print(final.shape)
+                    # print(b)
+                    # print(list(final.size())[0])
+                    # print(ground_truth.shape)
+                    loss.append(
+                        criterion(final[b], ground_truth[b])
+                    )
 
-                loss = - criterion(output, T.center_crop(T.complex_abs(img_gt).unsqueeze(0), [320, 320]).to(device))
-                
+                # print(loss)
+                loss = sum(loss)
+                # print(loss)
+                optimiser.zero_grad()
+                # loss = - criterion(output, T.center_crop(T.complex_abs(img_gt).unsqueeze(0), [320, 320]).transpose_(0,1).to(device))
+
                 # backward + optimise only if in training phase
                 if phase == 'train':
                     loss.backward()
@@ -154,15 +176,15 @@ if __name__ == "__main__":
 
                 # calculate loss
                 batch_loss.append(- loss.item())
-                running_loss += - loss.item() * img_in.size(0) 
+                running_loss += - loss.item() * img_in.size(0)
 
             epoch_loss = running_loss / data_lengths[phase]
             print('{} Loss: {:.4f}'.format(phase, epoch_loss))
 
             if phase == 'train':
                 train_loss.append(epoch_loss)
-    
-    torch.save(model.state_dict(), f"./models/UNET-2")
+
+    torch.save(model.state_dict(), f"./models/UNET-B10-ssim")
     print("Minimum loss:", min(batch_loss))
     print("Maximum loss:", max(batch_loss))
     print("Average loss:", sum(batch_loss) / len(batch_loss))
@@ -170,6 +192,3 @@ if __name__ == "__main__":
     print("Epoch loss: ", train_loss)
     plt.plot(range(n_epochs), train_loss)
     plt.show()
-
-    
-

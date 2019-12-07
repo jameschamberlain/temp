@@ -6,8 +6,8 @@ from utils.data_loader import MRIDataset, load_data_path, show_slices
 import fastMRI.functions.transforms as T
 import UNET
 
-data_path_train = '/data/local/NC2019MRI/train'
-data_path_val = '/data/local/NC2019MRI/train'
+data_path_train = '/home/sam/datasets/FastMRI/NC2019MRI/train'
+data_path_val = data_path_train
 data_list = load_data_path(data_path_train, data_path_val)
 
 acc = 8
@@ -21,7 +21,7 @@ val_loader = DataLoader(val_dataset, shuffle=True, batch_size=1, num_workers=num
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
 model = UNET.UNet(1,1,32).to(device)
-model.load_state_dict(torch.load("./models/UNET-10"))
+model.load_state_dict(torch.load("./models/UNET-3"))
 model.eval()
 fig = plt.figure()
 
