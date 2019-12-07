@@ -138,8 +138,7 @@ def train(model, optimiser, criterion, train_loader):
 
 def test(model, test_loader):
     model.eval()
-    correct = 0
-    total = 0
+    total_loss = []
     with torch.no_grad():
         for i, sample in enumerate(test_loader):
             img_gt, img_und, _, _, _ = sample
@@ -147,14 +146,18 @@ def test(model, test_loader):
 
             output = model(img_in)
 
-            real = T.center_crop(T.complex_abs(img_gt), [320, 320]).squeeze()
+            real = T.center_crop(T.complex_abs(img_gt).unsqueeze(0), [320, 320]).to(device)
+
+            loss = - pytorch_ssim.ssim(output, real)
+            total_loss.append(- loss.item())
 
             # TODO evaluate model
-            # _, predicted = torch.max(outputs.data, 1)
-            # total += target.size(0)
-            # correct += (predicted == target).sum().item()
+            #_, predicted = torch.max(outputs.data, 1)
+            #total += target.size(0)
+            #correct += (predicted == target).sum().item()
+    
+    return sum(total_loss)/len(total_loss) 
 
-    return correct / total
 
 
 @ray.remote
@@ -164,6 +167,7 @@ def evaluate_hyperparameters(config):
     train_loader, val_loader = get_data_loaders(config["batch_size"])
 
     criterion = pytorch_ssim.SSIM()
+    
     # criterion = nn.MSELoss()
     optimiser = optim.Adam(model.parameters(), lr=config["learning_rate"])
     # optimizer = optim.SGD(
