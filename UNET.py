@@ -79,7 +79,7 @@ num_workers = 8
 
 # create data loader for training set. It applies same to validation set as well
 train_dataset = MRIDataset(data_list['train'], acceleration=acc, center_fraction=cen_fract, use_seed=seed)
-train_loader = DataLoader(train_dataset, shuffle=True, batch_size=10, num_workers=num_workers, drop_last=True)
+train_loader = DataLoader(train_dataset, shuffle=True, batch_size=6, num_workers=num_workers, drop_last=True)
 print("Data loaded")
 
 EPSILON = 0.001
@@ -95,7 +95,7 @@ if __name__ == "__main__":
     optimiser = optim.Adam(model.parameters(), lr=EPSILON)
 
     total_step = len(train_loader)
-    n_epochs = 1
+    n_epochs = 10
     batch_loss = list()
     acc_list = list()
     epoch_loss = []
@@ -111,10 +111,7 @@ if __name__ == "__main__":
           #  plt.subplot(1, 1, 1)
           #  plt.imshow(T.complex_abs(img_und).squeeze().numpy(), cmap='gray')
           #  plt.show()
-
-            # img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).transpose(0, 1).to(device)
-            # print(img_und.shape)
-            # print(img_in.shape)
+          
             img_in = (T.complex_abs(img_und).unsqueeze(0)).transpose(0, 1).to(device)
             
 
