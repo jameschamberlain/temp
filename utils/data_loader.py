@@ -54,8 +54,6 @@ def get_epoch_batch(subject_id, acc, center_fract, use_seed=True):
 
     # reconstruct images from k-space data
     img_gt, img_und = T.ifft2(slice_kspace), T.ifft2(masked_kspace)
-
-    # img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).to(device)
     
     # perform data normalization which is important for network to learn useful features
     # during inference there is no ground truth image so use the zero-filled recon to normalize
@@ -69,7 +67,6 @@ def get_epoch_batch(subject_id, acc, center_fract, use_seed=True):
     temp = torch.Tensor(1, 320, 320, 2) 
     temp[0,:,:,0] = T.center_crop(img_und[0,:,:,0], [320, 320])
     temp[0,:,:,1] = T.center_crop(img_und[0,:,:,1], [320, 320])
-    # # img_und = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320])
     img_und = temp
 
     temp2 = torch.Tensor(1, 320, 320, 2) 
@@ -86,10 +83,6 @@ def get_epoch_batch(subject_id, acc, center_fract, use_seed=True):
     temp4[0,:,:,0] = T.center_crop(masks[0,:,:,0], [320, 320])
     temp4[0,:,:,1] = T.center_crop(masks[0,:,:,1], [320, 320])
     masks = temp4
-    # print("img_und:", img_und.squeeze(0).shape)
-    # print("img_gt:", img_gt.squeeze(0).shape)
-    # print("rawdata_und:", rawdata_und.squeeze(0).shape)
-    # print("masks:", masks.squeeze(0).shape)
 
     return img_gt.squeeze(0), img_und.squeeze(0), rawdata_und.squeeze(0), masks.squeeze(0), norm
 

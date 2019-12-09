@@ -95,7 +95,7 @@ if __name__ == "__main__":
     optimiser = optim.Adam(model.parameters(), lr=EPSILON)
 
     total_step = len(train_loader)
-    n_epochs = 10
+    n_epochs = 1
     batch_loss = list()
     acc_list = list()
     epoch_loss = []
@@ -112,7 +112,10 @@ if __name__ == "__main__":
           #  plt.imshow(T.complex_abs(img_und).squeeze().numpy(), cmap='gray')
           #  plt.show()
 
-            img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).transpose(0, 1).to(device)
+            # img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).transpose(0, 1).to(device)
+            # print(img_und.shape)
+            # print(img_in.shape)
+            img_in = (T.complex_abs(img_und).unsqueeze(0)).transpose(0, 1).to(device)
             
 
             output = model(img_in)
