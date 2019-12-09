@@ -49,7 +49,7 @@ for i, sample in enumerate(val_loader):
 
     # from left to right: mask, masked kspace, undersampled image, ground truth
     show_slices(all_imgs, [0, 1, 2], cmap='gray')
-    plt.savefig(f"{i}-e10-img.png")
+    plt.savefig(f"./plots/{i}-b10-ssim-e10-img.png")
     plt.pause(1)
 
     if i >= 3: break  # show 4 random slices
