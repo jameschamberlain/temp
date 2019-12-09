@@ -8,6 +8,25 @@ import torch
 from matplotlib import pyplot as plt
 
 
+def collate_batches(batch):
+    batch_len = len(batch)
+    data = torch.ones(batch_len, 1, 320, 320)
+    ret_list = torch.ones(batch_len, 1, 320, 320)
+
+    for i in range(batch_len):
+        input_value = batch[i][1]
+        input_value = T.complex_abs(input_value)
+        input_value = T.center_crop(input_value, (320, 320))
+        data[i, 0, :, :] = input_value
+
+        ret = batch[i][0]
+        ret = T.complex_abs(ret)
+        ret = T.center_crop(ret, (320, 320))
+        ret_list[i, 0, :, :] = ret
+
+    return ret_list, data, None, None, None
+
+
 def show_slices(data, slice_nums, cmap=None):  # visualisation
     fig = plt.figure(figsize=(15, 10))
     for i, num in enumerate(slice_nums):
@@ -52,11 +71,8 @@ def get_epoch_batch(subject_id, acc, center_fract, use_seed=True):
     masked_kspace = torch.where(mask == 0, torch.Tensor([0]), slice_kspace)
     masks = mask.repeat(S, Ny, 1, ps)
 
-    # reconstruct images from k-space data
     img_gt, img_und = T.ifft2(slice_kspace), T.ifft2(masked_kspace)
 
-    # img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).to(device)
-    
     # perform data normalization which is important for network to learn useful features
     # during inference there is no ground truth image so use the zero-filled recon to normalize
     norm = T.complex_abs(img_und).max()
@@ -64,32 +80,6 @@ def get_epoch_batch(subject_id, acc, center_fract, use_seed=True):
 
     # normalized data
     img_gt, img_und, rawdata_und = img_gt / norm, img_und / norm, masked_kspace / norm
-
-    # crop the images
-    temp = torch.Tensor(1, 320, 320, 2) 
-    temp[0,:,:,0] = T.center_crop(img_und[0,:,:,0], [320, 320])
-    temp[0,:,:,1] = T.center_crop(img_und[0,:,:,1], [320, 320])
-    # # img_und = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320])
-    img_und = temp
-
-    temp2 = torch.Tensor(1, 320, 320, 2) 
-    temp2[0,:,:,0] = T.center_crop(img_gt[0,:,:,0], [320, 320])
-    temp2[0,:,:,1] = T.center_crop(img_gt[0,:,:,1], [320, 320])
-    img_gt = temp2
-
-    temp3 = torch.Tensor(1, 320, 320, 2) 
-    temp3[0,:,:,0] = T.center_crop(rawdata_und[0,:,:,0], [320, 320])
-    temp3[0,:,:,1] = T.center_crop(rawdata_und[0,:,:,1], [320, 320])
-    rawdata_und = temp3
-
-    temp4 = torch.Tensor(1, 320, 320, 2) 
-    temp4[0,:,:,0] = T.center_crop(masks[0,:,:,0], [320, 320])
-    temp4[0,:,:,1] = T.center_crop(masks[0,:,:,1], [320, 320])
-    masks = temp4
-    # print("img_und:", img_und.squeeze(0).shape)
-    # print("img_gt:", img_gt.squeeze(0).shape)
-    # print("rawdata_und:", rawdata_und.squeeze(0).shape)
-    # print("masks:", masks.squeeze(0).shape)
 
     return img_gt.squeeze(0), img_und.squeeze(0), rawdata_und.squeeze(0), masks.squeeze(0), norm
 
@@ -120,6 +110,5 @@ def load_data_path(train_data_path, val_data_path):
 
             # the first 5 slices are mostly noise so it is better to exlude them
             data_list[train_and_val[i]] += [(fname, subject_data_path, slice) for slice in range(5, num_slice)]
-        
     
     return data_list

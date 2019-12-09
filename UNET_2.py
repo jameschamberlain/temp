@@ -8,65 +8,14 @@ from torch.nn import functional as F
 from torch.utils.data import DataLoader
 
 import pytorch_ssim
+from UNET import UNet
 from layers.conv_layer import ConvLayer
 import torch
 import fastMRI.functions.transforms as T
-from utils.data_loader import load_data_path, MRIDataset
+from utils.data_loader import load_data_path, MRIDataset, collate_batches
 
 import numpy as np
 import matplotlib.pyplot as plt
-
-
-class UNet(nn.Module):
-
-    def __init__(self, c_in: int, c_out: int, c: int) -> None:
-        super().__init__()
-        self.c_in = c_in
-        self.c_out = c_out
-        self.c = c
-        self.n_pool_layers = 4
-        self.drop_prob = 0.2
-        self.down_sample_layers = nn.ModuleList([ConvLayer(self.c_in, self.c, self.drop_prob)])
-        channels = self.c
-        for _ in range(self.n_pool_layers - 1):
-            self.down_sample_layers += [ConvLayer(channels, channels * 2, self.drop_prob)]
-            channels *= 2
-
-        self.conv = nn.Sequential(
-            nn.Conv2d(channels, channels, kernel_size=3, padding=1),
-            nn.InstanceNorm2d(channels),
-            nn.ReLU(),
-            nn.Dropout2d(self.drop_prob)
-        )
-
-        self.up_sample_layers = nn.ModuleList()
-        for _ in range(self.n_pool_layers - 1):
-            self.up_sample_layers += [ConvLayer(channels * 2, channels // 2, self.drop_prob)]
-            channels //= 2
-        self.up_sample_layers += [ConvLayer(channels * 2, channels, self.drop_prob)]
-
-        self.conv2 = nn.Sequential(
-            nn.Conv2d(channels, channels // 2, kernel_size=1, ),
-            nn.Conv2d(channels // 2, self.c_out, kernel_size=1),
-            nn.Conv2d(self.c_out, self.c_out, kernel_size=1)
-        )
-
-    def forward(self, x: Any, ):
-        stack = []
-        y = x
-        for layer in self.down_sample_layers:
-            y = layer(y)
-            stack.append(y)
-            y = F.max_pool2d(y, kernel_size=2)
-
-        y = self.conv(y)
-        for layer in self.up_sample_layers:
-            y = F.interpolate(y, scale_factor=2, mode='bilinear', align_corners=False)
-            y = torch.cat([y, stack.pop()], dim=1)
-            y = layer(y)
-
-        return self.conv2(y)
-
 
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
@@ -74,10 +23,10 @@ device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 print("Data loading...")
 try:
     data_path_train = '/data/local/NC2019MRI/train'
+    data_list = load_data_path(data_path_train, data_path_train)
 except:
     data_path_train = '/home/sam/datasets/FastMRI/NC2019MRI/train'
-
-data_list = load_data_path(data_path_train, data_path_train)
+    data_list = load_data_path(data_path_train, data_path_train)
 
 # Split dataset into train-validate
 validation_split = 0.1
@@ -92,17 +41,18 @@ train_idx = list(set(indices) - set(validation_idx))
 data_list_train = [data_list['train'][i] for i in train_idx]
 data_list_val = [data_list['val'][i] for i in validation_idx]
 
-acc = 8
+acc = 4
 cen_fract = 0.04
 seed = False  # random masks for each slice
 num_workers = 8
 
 # create data loader for training set. It applies same to validation set as well
 train_dataset = MRIDataset(data_list_train, acceleration=acc, center_fraction=cen_fract, use_seed=seed)
-train_loader = DataLoader(train_dataset, shuffle=True, batch_size=5, num_workers=num_workers)
+train_loader = DataLoader(train_dataset, shuffle=True, batch_size=10, num_workers=num_workers,
+                          collate_fn=collate_batches)
 
 val_dataset = MRIDataset(data_list_val, acceleration=acc, center_fraction=cen_fract, use_seed=seed)
-val_loader = DataLoader(val_dataset, shuffle=True, batch_size=5, num_workers=num_workers)
+val_loader = DataLoader(val_dataset, shuffle=True, batch_size=10, num_workers=num_workers, collate_fn=collate_batches)
 
 data_loaders = {"train": train_loader, "val": val_loader}
 data_lengths = {"train": len(train_idx), "val": val_len}
@@ -115,12 +65,12 @@ if __name__ == "__main__":
     model = UNet(1, 1, 32).to(device)
     print("Constructed model")
     criterion = nn.MSELoss()
-    #criterion = pytorch_ssim.SSIM()
+    # criterion = pytorch_ssim.SSIM()
     # optimiser = optim.SGD(model.parameters(), lr=EPSILON)
     optimiser = optim.Adam(model.parameters(), lr=EPSILON)
 
     total_step = len(train_loader)
-    n_epochs = 200
+    n_epochs = 10
     batch_loss = list()
     acc_list = list()
     train_loss = []
@@ -144,11 +94,13 @@ if __name__ == "__main__":
             for i, sample in enumerate(data_loaders[phase]):
                 # get the input data
                 img_gt, img_und, rawdata_und, masks, norm = sample
-                # print(1)
-                img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).transpose_(0, 1)
+                # print(img_gt.shape)
+                img_in = img_und
+                # img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).transpose_(0, 1)
                 img_in = Variable(torch.FloatTensor(img_in)).cuda()
                 # print(2)
-                ground_truth = T.center_crop(T.complex_abs(img_gt).unsqueeze(0), [320, 320]).transpose_(0, 1)
+                # ground_truth = T.center_crop(T.complex_abs(img_gt).unsqueeze(0), [320, 320]).transpose_(0, 1)
+                ground_truth = img_gt
                 ground_truth = Variable(torch.FloatTensor(ground_truth)).cuda()
                 output = model(img_in)
                 # print(3)

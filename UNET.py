@@ -21,7 +21,7 @@ class UNet(nn.Module):
         self.c_out = c_out
         self.c = c
         self.n_pool_layers = 4
-        self.drop_prob = 0
+        self.drop_prob = 0.01
         self.down_sample_layers = nn.ModuleList([ConvLayer(self.c_in, self.c, self.drop_prob)])
         channels = self.c
         for _ in range(self.n_pool_layers - 1):
@@ -68,10 +68,14 @@ device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
 # Load Data
 print("Data loading...")
-#data_path_train = '/home/sam/datasets/FastMRI/NC2019MRI/train'
-data_path_train = '/data/local/NC2019MRI/train'
-data_path_val = data_path_train
-data_list = load_data_path(data_path_train, data_path_val)
+try:
+    data_path_train = '/home/sam/datasets/FastMRI/NC2019MRI/train'
+    data_path_val = data_path_train
+    data_list = load_data_path(data_path_train, data_path_val)
+except FileNotFoundError:
+    data_path_train = '/data/local/NC2019MRI/train'
+    data_path_val = data_path_train
+    data_list = load_data_path(data_path_train, data_path_val)
 
 acc = 8
 cen_fract = 0.04
