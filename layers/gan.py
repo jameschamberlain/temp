@@ -1,7 +1,8 @@
 import torch.nn as nn
 import torch
+import numpy as np
 
-class GAN(nn.module):
+class GAN(nn.Module):
     def __init__(self,generator : nn.Module, discriminator : nn.Module, loss_func = nn.BCELoss()):
         """
 
@@ -10,7 +11,7 @@ class GAN(nn.module):
         is to receive extra information then this is given in the forward / training call. The output of the discriminator
         should be a single output between 0 and 1.
         """
-
+        super(GAN,self).__init__()
         self.generator = generator
         self.discriminator = discriminator
         self.loss_func = loss_func
@@ -49,7 +50,7 @@ class GAN(nn.module):
         :param smoothing:
         :return:
         """
-        if extra_discriminator_xs != None:
+        if extra_discriminator_xs is not None:
             if generator_xs.shape != extra_discriminator_xs.shape:
                 raise ValueError("extra_discriminator_xs dimensions do no match those of generator_xs")
 
@@ -61,6 +62,9 @@ class GAN(nn.module):
         # zeros represent a fake image
 
         #experiment with this as training may not work best like this and there may be huge jumps
+
+        g_loss = self.update_generator(generator_xs, extra=extra_discriminator_xs)
+        d_loss = self.update_discriminator(generator_xs, real_images, extra=extra_discriminator_xs)
         for i in range(0, epochs):
             if g_loss > d_loss:
                 print("updating generator")
@@ -115,7 +119,7 @@ class GAN(nn.module):
         loss.backward()
         optimizer.step()
 
-        return loss.numpy().mean()
+        return loss.detach().numpy().mean()
 
 
 
@@ -142,5 +146,30 @@ class GAN(nn.module):
         loss.backward()
         optimizer.step()
 
-        return loss.numpy().mean()
+        return loss.detach().numpy().mean()
 
+
+def test():
+    generator = nn.Sequential(nn.Linear(5,5,bias=False),nn.Sigmoid())
+    discriminator = nn.Sequential(nn.Conv1d(2,1,1), nn.Sigmoid())
+    inputs = []
+    inputs.append([[1,2,3,4,5]])
+    inputs.append([[2,2,3,3,5]])
+    inputs.append([[5,6,2,3,1]])
+    expected = []
+    expected.append([[5,4,3,2,1]])
+    expected.append([[5, 4, 3, 4, 5]])
+    expected.append([[5, 4, 3, 2, 5]])
+    expected.append([[5, 4, 3, 0, 2]])
+    inputs = np.array(inputs)
+    expected = np.array(expected)
+    inputs = torch.Tensor(inputs)
+    expected = torch.Tensor(expected)
+    # needs to be a seperate clone
+    extras = inputs.clone().detach()
+    inputs.requires_grad = True
+    expected.requires_grad = True
+    model = GAN(generator,discriminator)
+    model.train(inputs,expected,torch.optim.Adam,extras)
+
+test()
