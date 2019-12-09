@@ -23,7 +23,7 @@ val_loader = DataLoader(val_dataset, shuffle=True, batch_size=1, num_workers=num
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
 model = UNET.UNet(1,1,32).to(device)
-model.load_state_dict(torch.load("./models/UNET-B16e-10-ssim"))
+model.load_state_dict(torch.load("./models/UNET-B20e-10-dassim-adam"))
 model.eval()
 fig = plt.figure()
 

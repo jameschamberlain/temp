@@ -20,8 +20,8 @@ class UNet(nn.Module):
         self.c_in = c_in
         self.c_out = c_out
         self.c = c
-        self.n_pool_layers = 4
-        self.drop_prob = 0.01
+        self.n_pool_layers = 5
+        self.drop_prob = 0
         self.down_sample_layers = nn.ModuleList([ConvLayer(self.c_in, self.c, self.drop_prob)])
         channels = self.c
         for _ in range(self.n_pool_layers - 1):

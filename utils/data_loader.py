@@ -24,6 +24,8 @@ def collate_batches(batch):
         ret = T.center_crop(ret, (320, 320))
         ret_list[i, 0, :, :] = ret
 
+
+
     return ret_list, data, None, None, None
 
 

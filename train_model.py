@@ -23,24 +23,30 @@ error = lambda x: print(RED + x + ENDC)
 
 def advance_epoch(device, model, data_loader, optimizer):
     model.train()
+    losses = []
     avg_loss = 0.
 
     for iter, data in enumerate(data_loader):
         img_gt, img_und, rawdata_und, masks, norm = data
+
         img_in = Variable(torch.FloatTensor(img_und)).cuda()
 
         ground_truth = Variable(torch.FloatTensor(img_gt)).cuda()
-
+        # print(img_in.shape)
+        # print(ground_truth.shape)
         output = model(img_in)
+        # print(output.shape)
         criterion = pytorch_ssim.SSIM()
+
         loss = - criterion(output, ground_truth)
+        # loss = np.sum(loss)
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-
+        losses.append(-loss.item())
         avg_loss = 0.99 * avg_loss + 0.01 * loss.item() if iter > 0 else loss.item()
 
-    return avg_loss
+    return np.average(losses)
 
 
 def evaluate(device, model, data_loader):
@@ -69,7 +75,7 @@ CENTRE_FRACTION = 0.04
 ACCELERATION = 4
 EPSILON = 0.001
 GAMMA = 0.1
-BATCH_SIZE = 20
+BATCH_SIZE = 5
 NUMBER_EPOCHS = 10
 
 
@@ -99,7 +105,8 @@ def main():
 
     num_workers = 8
     # create data loader for training set. It applies same to validation set as well
-    train_dataset = MRIDataset(data_list_train, acceleration=ACCELERATION, center_fraction=CENTRE_FRACTION, use_seed=seed)
+    train_dataset = MRIDataset(data_list_train, acceleration=ACCELERATION, center_fraction=CENTRE_FRACTION,
+                               use_seed=seed)
     train_loader = DataLoader(train_dataset, shuffle=True, batch_size=BATCH_SIZE, num_workers=num_workers,
                               collate_fn=collate_batches)
 
@@ -112,7 +119,7 @@ def main():
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
     warn("Constructing model")
-    model = UNet(1, 1, 32).to(device)
+    model = UNet(1, 1, 64).to(device)
     success("Constructed model")
 
     criterion = pytorch_ssim.SSIM()
