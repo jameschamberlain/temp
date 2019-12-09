@@ -108,7 +108,7 @@ class GAN(nn.Module):
 
         #the loss from real images
         disc_input = torch.cat((real_imgs,extra),dim=1)
-        real_outputs = self.discriminator.forward(disc_input,disc_input)
+        real_outputs = self.discriminator.forward(disc_input)
         real_loss = self.loss_func(real_outputs, real_ys)
 
 
@@ -151,11 +151,12 @@ class GAN(nn.Module):
 
 def test():
     generator = nn.Sequential(nn.Linear(5,5,bias=False),nn.Sigmoid())
-    discriminator = nn.Sequential(nn.Conv1d(2,1,1), nn.Sigmoid())
+    discriminator = nn.Sequential(nn.Conv1d(2,1,1), nn.Linear(5,1,bias=False), nn.Sigmoid())
     inputs = []
     inputs.append([[1,2,3,4,5]])
     inputs.append([[2,2,3,3,5]])
     inputs.append([[5,6,2,3,1]])
+    inputs.append([[5, 6, 2, 3, 1]])
     expected = []
     expected.append([[5,4,3,2,1]])
     expected.append([[5, 4, 3, 4, 5]])

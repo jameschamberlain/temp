@@ -1,6 +1,4 @@
 from typing import Any
-from PIL import Image
-import torchvision as tv
 import torch.nn as nn
 from torch import optim
 from torch.nn import functional as F
@@ -17,6 +15,35 @@ import matplotlib.pyplot as plt
 
 import hyper_param
 
+class UNetDown(nn.Module):
+    def __init__(self, c_in: int, c_out: int, c: int) -> None:
+        super().__init__()
+        self.c_in = c_in
+        self.c_out = c_out
+        self.c = c
+        self.n_pool_layers = hyper_param.POOL_LAYERS
+        self.drop_prob = hyper_param.DROPOUT
+        self.down_sample_layers = nn.ModuleList([ConvLayer(self.c_in, self.c, self.drop_prob)])
+        channels = self.c
+        for _ in range(self.n_pool_layers - 1):
+            self.down_sample_layers += [ConvLayer(channels, channels * 2, self.drop_prob)]
+            channels *= 2
+
+        self.conv = nn.Sequential(
+            nn.Conv2d(channels, channels, kernel_size=3, padding=1),
+            nn.InstanceNorm2d(channels),
+            nn.ReLU(),
+            nn.Dropout2d(self.drop_prob)
+        )
+
+    def forward(self, x: Any, ):
+        stack = []
+        y = x
+        for layer in self.down_sample_layers:
+            y = layer(y)
+            stack.append(y)
+            y = F.max_pool2d(y, kernel_size=2)
+        y = self.conv(y)
 
 class UNet(nn.Module):
 
