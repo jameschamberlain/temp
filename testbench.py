@@ -57,13 +57,13 @@ num_workers = 8
 
 # create data loader for training set. It applies same to validation set as well
 train_dataset = MRIDataset(data_list_train, acceleration=acc, center_fraction=cen_fract, use_seed=seed)
-train_loader = DataLoader(train_dataset, shuffle=True, batch_size=16, num_workers=num_workers,
+train_loader = DataLoader(train_dataset, shuffle=True, batch_size=10, num_workers=num_workers,
                           collate_fn=collate_batches)
 
-# val_dataset = MRIDataset(data_list_val, acceleration=acc, center_fraction=cen_fract, use_seed=seed)
-# val_loader = DataLoader(val_dataset, shuffle=True, batch_size=10, num_workers=num_workers, collate_fn=collate_batches)
+val_dataset = MRIDataset(data_list_val, acceleration=acc, center_fraction=cen_fract, use_seed=seed)
+val_loader = DataLoader(val_dataset, shuffle=True, batch_size=10, num_workers=num_workers, collate_fn=collate_batches)
 
-# data_loaders = {"train": train_loader, "val": val_loader}
+data_loaders = {"train": train_loader, "val": val_loader}
 data_lengths = {"train": len(train_idx), "val": val_len}
 success("Data loaded")
 
@@ -80,7 +80,7 @@ if __name__ == "__main__":
     optimiser = optim.Adam(model.parameters(), lr=EPSILON)
 
     total_step = len(train_loader)
-    n_epochs = 10
+    n_epochs = 40
     batch_loss = list()
     acc_list = list()
     train_loss = []
@@ -92,72 +92,69 @@ if __name__ == "__main__":
         info('-' * 10)
 
         # Each epoch has a training and validation phase
-        # for phase in ['train', 'val']:
-        # if phase == 'train':
-        #     model.train(True)  # Set model to training mode
-        # else:
-        #     model.train(False)  # Set model to evaluate mode
+        for phase in ['train', 'val']:
+            if phase == 'train':
+                model.train(True)  # Set model to training mode
+            else:
+                model.train(False)  # Set model to evaluate mode
 
-        running_loss = 0.0
+            running_loss = 0.0
 
-        # Iterate over data.
-        for i, sample in enumerate(train_loader):
-            # get the input data
-            img_gt, img_und, rawdata_und, masks, norm = sample
-            # print(img_gt.shape)
-            img_in = img_und
-            # img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).transpose_(0, 1)
-            img_in = Variable(torch.FloatTensor(img_in)).cuda()
-            # print(2)
-            # ground_truth = T.center_crop(T.complex_abs(img_gt).unsqueeze(0), [320, 320]).transpose_(0, 1)
-            ground_truth = img_gt
-            ground_truth = Variable(torch.FloatTensor(ground_truth)).cuda()
-            output = model(img_in)
-            # print(3)
-            final = output
-            ground_truth = ground_truth
-            # print(4)
-            # loss = []
-            loss = - criterion(output, ground_truth)
-            # print(final.shape)
-            # for b in range(list(final.size())[0]):
-            #     # print(final.shape)
-            #     # print(b)
-            #     # print(list(final.size())[0])
-            #     # print(ground_truth.shape)
-            #     loss.append(
-            #         criterion(final[b], ground_truth[b])
-            #     )
+            # Iterate over data.
+            for i, sample in enumerate(train_loader):
+                # get the input data
+                img_gt, img_und, rawdata_und, masks, norm = sample
+                # print(img_gt.shape)
+                img_in = img_und
+                # img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).transpose_(0, 1)
+                img_in = Variable(torch.FloatTensor(img_in)).cuda()
+                # print(2)
+                # ground_truth = T.center_crop(T.complex_abs(img_gt).unsqueeze(0), [320, 320]).transpose_(0, 1)
+                ground_truth = img_gt
+                ground_truth = Variable(torch.FloatTensor(ground_truth)).cuda()
+                output = model(img_in)
+                # print(3)
+                final = output
+                ground_truth = ground_truth
+                # print(4)
+                # loss = []
+                loss = - criterion(output, ground_truth)
+                # print(final.shape)
+                # for b in range(list(final.size())[0]):
+                #     # print(final.shape)
+                #     # print(b)
+                #     # print(list(final.size())[0])
+                #     # print(ground_truth.shape)
+                #     loss.append(
+                #         criterion(final[b], ground_truth[b])
+                #     )
 
-            # print(loss)
-            # loss = sum(loss)
-            # print(loss)
-            optimiser.zero_grad()
-            # loss = - criterion(output, T.center_crop(T.complex_abs(img_gt).unsqueeze(0), [320, 320]).transpose_(0,1).to(device))
+                # print(loss)
+                # loss = sum(loss)
+                # print(loss)
+                optimiser.zero_grad()
+                # loss = - criterion(output, T.center_crop(T.complex_abs(img_gt).unsqueeze(0), [320, 320]).transpose_(0,1).to(device))
 
-            # backward + optimise only if in training phase
-            # if phase == 'train':
-            loss.backward()
-            optimiser.step()
+                # backward + optimise only if in training phase
+                if phase == 'train':
+                    loss.backward()
+                    optimiser.step()
 
-            # calculate loss
-            batch_loss.append(-loss.item())
-            running_loss += - loss.item() * img_in.size(0)
+                # calculate loss
+                batch_loss.append(loss.item())
+                running_loss += loss.item() * img_in.size(0)
 
-        val_dataset = MRIDataset(data_list_val, acceleration=acc, center_fraction=cen_fract, use_seed=seed)
-        val_loader = DataLoader(val_dataset, shuffle=True, batch_size=10, num_workers=num_workers, collate_fn=collate_batches)
+            epoch_loss = running_loss / data_lengths[phase]
+            success('{} Loss: {:.4f}'.format(phase, epoch_loss))
 
-        epoch_loss = running_loss / data_lengths['train']
-        success('{} Loss: {:.4f}'.format('train', epoch_loss))
+            if phase == 'train':
+                train_loss.append(epoch_loss)
 
-        # if phase == 'train':
-        train_loss.append(epoch_loss)
+    torch.save(model.state_dict(), f"./models/UNET-B10e-40-ssim")
+    success(f"Minimum loss: {min(batch_loss)}")
+    error(f"Maximum loss:{max(batch_loss)}")
+    warn(f"Average loss: {sum(batch_loss) / len(batch_loss)}")
 
-torch.save(model.state_dict(), f"./models/UNET-B10-ssim")
-success(f"Minimum loss: {min(batch_loss)}")
-error(f"Maximum loss:{max(batch_loss)}")
-warn(f"Average loss: {sum(batch_loss) / len(batch_loss)}")
-
-print("Epoch loss: ", train_loss)
-plt.plot(range(n_epochs), train_loss)
-plt.show()
+    print("Epoch loss: ", train_loss)
+    plt.plot(range(n_epochs), train_loss)
+    plt.show()

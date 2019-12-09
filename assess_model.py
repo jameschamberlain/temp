@@ -23,7 +23,7 @@ val_loader = DataLoader(val_dataset, shuffle=True, batch_size=1, num_workers=num
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
 model = UNET.UNet(1,1,32).to(device)
-model.load_state_dict(torch.load("./models/UNET-B10-ssim"))
+model.load_state_dict(torch.load("./models/UNET-B16e-10-ssim"))
 model.eval()
 fig = plt.figure()
 
@@ -49,7 +49,7 @@ for i, sample in enumerate(val_loader):
 
     # from left to right: mask, masked kspace, undersampled image, ground truth
     show_slices(all_imgs, [0, 1, 2], cmap='gray')
-    plt.savefig(f"./plots/{i}-b10-ssim-e10-img.png")
+    plt.savefig(f"./plots/{i}-b10e-40-ssim-e10-img.png")
     plt.pause(1)
 
     if i >= 3: break  # show 4 random slices
