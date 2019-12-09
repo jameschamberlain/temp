@@ -6,7 +6,9 @@ from utils.data_loader import MRIDataset, load_data_path, show_slices
 import fastMRI.functions.transforms as T
 import UNET
 
-data_path_train = '/home/sam/datasets/FastMRI/NC2019MRI/train'
+#data_path_train = '/home/sam/datasets/FastMRI/NC2019MRI/train'
+data_path_train = '/data/local/NC2019MRI/train'
+
 data_path_val = data_path_train
 data_list = load_data_path(data_path_train, data_path_val)
 
@@ -21,7 +23,7 @@ val_loader = DataLoader(val_dataset, shuffle=True, batch_size=1, num_workers=num
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
 model = UNET.UNet(1,1,32).to(device)
-model.load_state_dict(torch.load("./models/UNET-3"))
+model.load_state_dict(torch.load("./models/UNET-B10-ssim"))
 model.eval()
 fig = plt.figure()
 
@@ -46,7 +48,7 @@ for i, sample in enumerate(val_loader):
 
     # from left to right: mask, masked kspace, undersampled image, ground truth
     show_slices(all_imgs, [0, 1, 2], cmap='gray')
-    plt.show()
+    plt.savefig(f"{i}-img.png")
     plt.pause(1)
 
     if i >= 3: break  # show 4 random slices

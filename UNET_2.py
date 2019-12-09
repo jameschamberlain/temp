@@ -72,8 +72,8 @@ device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
 # Load Data
 print("Data loading...")
-# data_path_train = '/data/local/NC2019MRI/train'
-data_path_train = '/home/sam/datasets/FastMRI/NC2019MRI/train'
+data_path_train = '/data/local/NC2019MRI/train'
+#data_path_train = '/home/sam/datasets/FastMRI/NC2019MRI/train'
 data_list = load_data_path(data_path_train, data_path_train)
 
 # Split dataset into train-validate
@@ -96,10 +96,10 @@ num_workers = 8
 
 # create data loader for training set. It applies same to validation set as well
 train_dataset = MRIDataset(data_list_train, acceleration=acc, center_fraction=cen_fract, use_seed=seed)
-train_loader = DataLoader(train_dataset, shuffle=True, batch_size=8, num_workers=num_workers)
+train_loader = DataLoader(train_dataset, shuffle=True, batch_size=5, num_workers=num_workers)
 
 val_dataset = MRIDataset(data_list_val, acceleration=acc, center_fraction=cen_fract, use_seed=seed)
-val_loader = DataLoader(val_dataset, shuffle=True, batch_size=8, num_workers=num_workers)
+val_loader = DataLoader(val_dataset, shuffle=True, batch_size=5, num_workers=num_workers)
 
 data_loaders = {"train": train_loader, "val": val_loader}
 data_lengths = {"train": len(train_idx), "val": val_len}
@@ -111,13 +111,13 @@ if __name__ == "__main__":
     print(device)
     model = UNet(1, 1, 32).to(device)
     print("Constructed model")
-    # criterion = nn.MSELoss()
-    criterion = pytorch_ssim.SSIM()
+    criterion = nn.MSELoss()
+    #criterion = pytorch_ssim.SSIM()
     # optimiser = optim.SGD(model.parameters(), lr=EPSILON)
     optimiser = optim.Adam(model.parameters(), lr=EPSILON)
 
     total_step = len(train_loader)
-    n_epochs = 10
+    n_epochs = 200
     batch_loss = list()
     acc_list = list()
     train_loss = []
