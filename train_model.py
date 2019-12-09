@@ -21,7 +21,7 @@ success = lambda x: print(GREEN + x + ENDC)
 error = lambda x: print(RED + x + ENDC)
 
 
-def advance_epoch(device, model, data_loader, optimizer):
+def advance_epoch(model, data_loader, optimizer):
     model.train()
     losses = []
     avg_loss = 0.
@@ -71,12 +71,14 @@ def evaluate(device, model, data_loader):
     return np.mean(losses)
 
 
-CENTRE_FRACTION = 0.04
+CENTRE_FRACTION = 0.08
 ACCELERATION = 4
 EPSILON = 0.001
 GAMMA = 0.1
-BATCH_SIZE = 5
+BATCH_SIZE = 4
 NUMBER_EPOCHS = 10
+NUMBER_POOL_LAYERS = 4
+DROP_PROB = 0
 
 
 def main():
@@ -119,7 +121,7 @@ def main():
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
     warn("Constructing model")
-    model = UNet(1, 1, 64).to(device)
+    model = UNet(1, 1, 128, NUMBER_POOL_LAYERS, DROP_PROB).to(device)
     success("Constructed model")
 
     criterion = pytorch_ssim.SSIM()
@@ -139,7 +141,7 @@ def main():
         success(f"EPOCH: {epoch}")
         error("-" * 10)
         scheduler.step(epoch)
-        train_loss = advance_epoch(device, model, train_loader, optimiser)
+        train_loss = advance_epoch(model, train_loader, optimiser)
         dev_loss = evaluate(device, model, val_loader)
         # visualize(args, epoch, model, display_loader, writer)
         info(

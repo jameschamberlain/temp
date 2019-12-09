@@ -15,13 +15,13 @@ from utils.data_loader import load_data_path, MRIDataset
 
 class UNet(nn.Module):
 
-    def __init__(self, c_in: int, c_out: int, c: int) -> None:
+    def __init__(self, c_in: int, c_out: int, c: int, n_pool_layers: int, drop_prob: float) -> None:
         super().__init__()
         self.c_in = c_in
         self.c_out = c_out
         self.c = c
-        self.n_pool_layers = 5
-        self.drop_prob = 0
+        self.n_pool_layers = n_pool_layers
+        self.drop_prob = drop_prob
         self.down_sample_layers = nn.ModuleList([ConvLayer(self.c_in, self.c, self.drop_prob)])
         channels = self.c
         for _ in range(self.n_pool_layers - 1):
@@ -62,4 +62,3 @@ class UNet(nn.Module):
             y = layer(y)
 
         return self.conv2(y)
-
