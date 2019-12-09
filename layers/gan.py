@@ -10,6 +10,7 @@ class GAN(nn.Module):
         :param discriminator: the discriminator network used for discriminating between the two, if the discriminator
         is to receive extra information then this is given in the forward / training call. The output of the discriminator
         should be a single output between 0 and 1.
+        :param loss_func: the instantiated loss function
         """
         super(GAN,self).__init__()
         self.generator = generator
@@ -34,20 +35,22 @@ class GAN(nn.Module):
         return output
 
 
-    def train(self, generator_xs, real_images, optimizer, extra_discriminator_xs=None, epochs=2000,verbose=True, lr=0.001, batch_size=1, smoothing=1.0):
+    def train(self, generator_xs, real_images, optimizer, extra_discriminator_xs=None, epochs=2000,verbose=True,
+              lr=0.001, smoothing=1.0):
         """
         validation sets have been excluded as it's often best to validate by checking by eye the outputs of the network
 
         in our case the discriminator_xs will be the same as our input
 
-        :param generator_xs:
-        :param real_images:
-        :param optimizer:
-        :param extra_discriminator_xs: these are extra inputs to the discriminator that will be concatenated with the input to the discrimnator
-        :param verbose:
-        :param lr:
-        :param batch_size:
-        :param smoothing:
+        :param generator_xs: this is the noise or images that you feed into the generator network
+        :param real_images: these are the set of images you are trying to recreate
+        :param optimizer: the optimizer you want to use e.g. optimizer=torch.optim.Adam
+        :param extra_discriminator_xs: these are extra inputs to the discriminator that will be concatenated with the
+        input to the discriminator in our case you want to put in the corresponding down sampled image with the high res
+        image
+        :param verbose: not implemented yet
+        :param lr: the learning rate for the discriminator and the generator
+        :param smoothing: not implemented yet
         :return:
         """
         if extra_discriminator_xs is not None:
