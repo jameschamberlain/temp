@@ -5,7 +5,7 @@ import numpy as np
 from torch import optim
 from torch.autograd import Variable
 from torch.utils.data import DataLoader
-
+import pandas as pd
 import pytorch_ssim
 from UNET import UNet
 from utils.data_loader import collate_batches, MRIDataset, load_data_path
@@ -15,10 +15,18 @@ RED = '\033[0;31m'
 GREEN = '\033[0;32m'
 YELLOW = '\033[0;33m'
 ENDC = '\033[0m'
-info = lambda x: print(x)
-warn = lambda x: print(YELLOW + x + ENDC)
-success = lambda x: print(GREEN + x + ENDC)
-error = lambda x: print(RED + x + ENDC)
+
+
+def info(x): return print(x)
+
+
+def warn(x): return print(YELLOW + x + ENDC)
+
+
+def success(x): return print(GREEN + x + ENDC)
+
+
+def error(x): return print(RED + x + ENDC)
 
 
 def advance_epoch(model, data_loader, optimizer):
@@ -80,6 +88,18 @@ NUMBER_EPOCHS = 30
 NUMBER_POOL_LAYERS = 4
 DROP_PROB = 0
 
+def plot_graph(train_loss,val_loss):
+    x = list(range(NUMBER_EPOCHS))
+    y1 = train_loss
+    y2 = val_loss
+    plt.plot(y1,'b-')
+    plt.plot(y2,'r-')
+
+
+    plt.xlabel("Epochs")
+    plt.ylabel("loss, ssim")
+    plt.title("Using Adam Optimiser")
+    plt.show()
 
 def main():
     warn("Data loading...")
@@ -149,18 +169,28 @@ def main():
         val_losses.append(dev_loss)
         # visualize(args, epoch, model, display_loader, writer)
         info(
-            f'Epoch = [{epoch:4d}/{NUMBER_EPOCHS:4d}] TrainLoss = {train_loss:.4g} '
+            f'Epoch = [{epoch+1:4d}/{NUMBER_EPOCHS:4d}] TrainLoss = {train_loss:.4g} '
             f'ValLoss = {dev_loss:.4g}',
         )
+    
     torch.save(model.state_dict(),
-               f"./vary-optim-models/UNET-lr{EPSILON}-adam.pkl")
+               f"./vary-optim/models/UNET-lr{EPSILON}-adam.pkl")
+    # x = range(1, NUMBER_EPOCHS)
+    # print(train_losses)
+    # print(val_losses)
+    # plt.plot(train_losses)
+    # plt.plot(val_losses)
 
-    plt.plot(range(NUMBER_EPOCHS), np.subtract(1, train_losses))
-    plt.plot(range(NUMBER_EPOCHS), np.subtract(1, val_losses))
-    plt.xlabel("Epochs")
-    plt.ylabel("loss, ssim")
+    plot_graph(train_losses,val_losses)
+
+    # plt.xlim(NUMBER_EPOCHS+1)
+    # data = pd.DataFrame({'epochs' : range(NUMBER_EPOCHS), 'train loss':train_losses, 'val loss': val_losses})
+    
+    # plt.plot('epochs','train loss','b-')
+    # plt.plot('epochs','val loss','r-')
+    # plt.legend()
     plt.show()
-    plt.save(f"./vary-optim/plots/loss-variance-lr{EPSILON}-adam")
+    plt.savefig(f"./vary-optim/plots/loss-variance-lr{EPSILON}-adam.jpg")
 
 
 if __name__ == "__main__":
