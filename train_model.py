@@ -10,7 +10,7 @@ import pytorch_ssim
 from UNET import UNet
 from utils.data_loader import collate_batches, MRIDataset, load_data_path
 import matplotlib.pyplot as plt
-
+import pickle
 RED = '\033[0;31m'
 GREEN = '\033[0;32m'
 YELLOW = '\033[0;33m'
@@ -189,8 +189,13 @@ def main():
     # plt.plot('epochs','train loss','b-')
     # plt.plot('epochs','val loss','r-')
     # plt.legend()
-    plt.show()
+
     plt.savefig(f"./vary-optim/plots/loss-variance-lr{EPSILON}-adam.jpg")
+    with open("./vary-optim/pickles/train_loss_adam.pkl",'wb') as f:
+        pickle.dump(train_losses,f)
+    with open("./vary-optim/pickles/val_loss_adam.pkl",'wb') as f:
+        pickle.dump(val_losses,f)
+    
 
 
 if __name__ == "__main__":
