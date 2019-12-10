@@ -72,7 +72,7 @@ def evaluate(device, model, data_loader):
 
 CENTRE_FRACTION = 0.08
 ACCELERATION = 4
-EPSILON = 0.00001
+EPSILON = 0.0001
 GAMMA = 0.1
 STEP_SIZE = 10
 BATCH_SIZE = 14
