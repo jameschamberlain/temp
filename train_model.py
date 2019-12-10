@@ -73,10 +73,11 @@ def evaluate(device, model, data_loader):
 
 CENTRE_FRACTION = 0.08
 ACCELERATION = 4
-EPSILON = 0.001
+EPSILON = 0.0001
 GAMMA = 0.1
-BATCH_SIZE = 4
-NUMBER_EPOCHS = 10
+STEP_SIZE = 10
+BATCH_SIZE = 14
+NUMBER_EPOCHS = 30
 NUMBER_POOL_LAYERS = 4
 DROP_PROB = 0
 
@@ -112,7 +113,8 @@ def main():
     train_loader = DataLoader(train_dataset, shuffle=True, batch_size=BATCH_SIZE, num_workers=num_workers,
                               collate_fn=collate_batches)
 
-    val_dataset = MRIDataset(data_list_val, acceleration=ACCELERATION, center_fraction=CENTRE_FRACTION, use_seed=seed)
+    val_dataset = MRIDataset(data_list_val, acceleration=ACCELERATION,
+                             center_fraction=CENTRE_FRACTION, use_seed=seed)
     val_loader = DataLoader(val_dataset, shuffle=True, batch_size=BATCH_SIZE, num_workers=num_workers,
                             collate_fn=collate_batches)
 
@@ -121,7 +123,7 @@ def main():
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
     warn("Constructing model")
-    model = UNet(1, 1, 128, NUMBER_POOL_LAYERS, DROP_PROB).to(device)
+    model = UNet(1, 1, 32, NUMBER_POOL_LAYERS, DROP_PROB).to(device)
     success("Constructed model")
 
     criterion = pytorch_ssim.SSIM()
@@ -135,20 +137,26 @@ def main():
     warn("Starting training")
     # fig = plt.figure()
 
-    scheduler = torch.optim.lr_scheduler.StepLR(optimiser, EPSILON, GAMMA)
-
+    # scheduler = torch.optim.lr_scheduler.StepLR(optimizer=optimiser, step_size=STEP_SIZE, gamma=GAMMA)
+    val_losses = []
+    train_losses = []
     for epoch in range(0, NUMBER_EPOCHS):
         success(f"EPOCH: {epoch}")
         error("-" * 10)
-        scheduler.step(epoch)
         train_loss = advance_epoch(model, train_loader, optimiser)
+        train_losses.append(train_loss)
+        # scheduler.step(epoch)
         dev_loss = evaluate(device, model, val_loader)
+        val_losses.append(dev_loss)
         # visualize(args, epoch, model, display_loader, writer)
         info(
             f'Epoch = [{epoch:4d}/{NUMBER_EPOCHS:4d}] TrainLoss = {train_loss:.4g} '
             f'ValLoss = {dev_loss:.4g}',
         )
-    torch.save(model.state_dict(), f"./models/UNET-B{BATCH_SIZE}e-{NUMBER_EPOCHS}-ssim-adam")
+    torch.save(model.state_dict(),
+               f"./models/UNET-B{BATCH_SIZE}e-{NUMBER_EPOCHS}-ssim-adam")
+    plt.plot(range(NUMBER_EPOCHS), train_losses)
+    plt.plot(range(NUMBER_EPOCHS), val_losses)
 
 
 if __name__ == "__main__":
