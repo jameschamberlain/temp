@@ -105,6 +105,5 @@ venv.bak/
 
 # large model files
 
-models/
 
 .idea/
