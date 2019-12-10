@@ -93,3 +93,24 @@ def load_data_path(train_data_path, val_data_path):
             data_list[train_and_val[i]] += [(fname, subject_data_path, slice) for slice in range(5, num_slice)]
     
     return data_list
+
+
+def collate_batches(batch):
+    batch_len = len(batch)
+    data = torch.ones(batch_len, 1, 320, 320)
+    ret_list = torch.ones(batch_len, 1, 320, 320)
+
+    for i in range(batch_len):
+        input_value = batch[i][1]
+        input_value = T.complex_abs(input_value)
+        input_value = T.center_crop(input_value, (320, 320))
+        data[i, 0, :, :] = input_value
+
+        ret = batch[i][0]
+        ret = T.complex_abs(ret)
+        ret = T.center_crop(ret, (320, 320))
+        ret_list[i, 0, :, :] = ret
+
+
+
+    return ret_list, data, None, None, None
