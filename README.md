@@ -16,4 +16,12 @@
     - [ ] Evaluations for each major landmark
     - [ ] References
     
-
+- [ ] Experimental Data
+    - [ ] Vary learning rate
+    - [ ] vary batch size 
+    - [ ] vary number of epochs
+    - [ ] vary optimiser 
+    - [ ] vary mask acceleration
+    - [ ] vary channel width 
+    - [ ] vary number of pool layers
+    
