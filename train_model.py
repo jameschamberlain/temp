@@ -36,14 +36,13 @@ def advance_epoch(model, data_loader, optimizer):
         # print(ground_truth.shape)
         output = model(img_in)
         # print(output.shape)
-        criterion = pytorch_ssim.SSIM()
 
-        loss = - criterion(output, ground_truth)
+        loss = 1 - pytorch_ssim.ssim(output, ground_truth)
         # loss = np.sum(loss)
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-        losses.append(-loss.item())
+        losses.append(loss.item())
         avg_loss = 0.99 * avg_loss + 0.01 * loss.item() if iter > 0 else loss.item()
 
     return np.average(losses)
@@ -66,14 +65,14 @@ def evaluate(device, model, data_loader):
             # output = output
             # print(norm.shape)
 
-            loss = - pytorch_ssim.ssim(output, img_gt)
+            loss = 1 - pytorch_ssim.ssim(output, img_gt)
             losses.append(loss.item())
     return np.mean(losses)
 
 
 CENTRE_FRACTION = 0.08
 ACCELERATION = 4
-EPSILON = 0.0001
+EPSILON = 0.00001
 GAMMA = 0.1
 STEP_SIZE = 10
 BATCH_SIZE = 14
@@ -101,8 +100,8 @@ def main():
     validation_idx = np.random.choice(indices, size=val_len, replace=False)
     train_idx = list(set(indices) - set(validation_idx))
 
-    data_list_train = [data_list['train'][i] for i in train_idx]
-    data_list_val = [data_list['val'][i] for i in validation_idx]
+    data_list_train = data_list['train']
+    data_list_val = data_list['val']
 
     seed = False  # random masks for each slice
 
@@ -154,7 +153,7 @@ def main():
             f'ValLoss = {dev_loss:.4g}',
         )
     torch.save(model.state_dict(),
-               f"./models/UNET-B{BATCH_SIZE}e-{NUMBER_EPOCHS}-ssim-adam")
+               f"./models/UNET-B{BATCH_SIZE}e-{NUMBER_EPOCHS}-lr{EPSILON}-ssim-adam.pkl")
     plt.plot(range(NUMBER_EPOCHS), train_losses)
     plt.plot(range(NUMBER_EPOCHS), val_losses)
 

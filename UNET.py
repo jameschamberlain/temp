@@ -61,4 +61,6 @@ class UNet(nn.Module):
             y = torch.cat([y, stack.pop()], dim=1)
             y = layer(y)
 
-        return self.conv2(y)
+        y = self.conv2(y)
+        y = torch.clamp(y,0,1)
+        return y
