@@ -70,10 +70,11 @@ class UNet(nn.Module):
 
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
+import ray
 ray.init()
 
 # The number of sets of random hyperparameters to try.
-num_evaluations = 10
+num_evaluations = 3
 
 
 # A function for generating random hyperparameters.
@@ -122,12 +123,12 @@ def train(model, optimiser, criterion, train_loader):
     
     for i, sample in enumerate(train_loader):
             img_gt, img_und, _, _, _ = sample
-            img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).to(device)
+            img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320])
 
             output = model(img_in)
             optimiser.zero_grad()
 
-            loss = - criterion(output, T.center_crop(T.complex_abs(img_gt).unsqueeze(0), [320, 320]).to(device))
+            loss = - criterion(output, T.center_crop(T.complex_abs(img_gt).unsqueeze(0), [320, 320]))
             loss.backward()
             optimiser.step()
 
@@ -137,11 +138,11 @@ def test(model, test_loader):
     with torch.no_grad():
         for i, sample in enumerate(test_loader):
             img_gt, img_und, _, _, _ = sample
-            img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).to(device)
+            img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320])
 
             output = model(img_in)
 
-            real = T.center_crop(T.complex_abs(img_gt).unsqueeze(0), [320, 320]).to(device)
+            real = T.center_crop(T.complex_abs(img_gt).unsqueeze(0), [320, 320])
 
             loss = - pytorch_ssim.ssim(output, real)
             total_loss.append(- loss.item())
@@ -154,11 +155,10 @@ def test(model, test_loader):
     return sum(total_loss)/len(total_loss) 
 
 
-@ray.remote
 def evaluate_hyperparameters(config):
     print("Constructed model")
-    model = UNet(1, 1, hyper_param.CHANNELS).to(device)
-    train_loader, val_loader = get_data_loaders(config["batch_size"])
+    model = UNet(1, 1, hyper_param.CHANNELS)
+    train_loader, val_loader = get_data_loaders(1)
 
     criterion = pytorch_ssim.SSIM()
     
@@ -188,7 +188,7 @@ if __name__ == "__main__":
     # Randomly generate sets of hyperparameters and launch a task to evaluate it.
     for i in range(num_evaluations):
         hyperparameters = generate_hyperparameters()
-        accuracy_id = evaluate_hyperparameters.remote(hyperparameters)
+        accuracy_id = evaluate_hyperparameters(hyperparameters)
         remaining_ids.append(accuracy_id)
         hyperparameters_mapping[accuracy_id] = hyperparameters
 
