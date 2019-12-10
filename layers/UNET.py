@@ -64,8 +64,10 @@ class UNet(nn.Module):
             y = torch.cat([y, stack.pop()], dim=1)
             y = layer(y)
 
-<<<<<<< HEAD:layers/UNET.py
-        return self.conv2(y)
+        y = self.conv2(y)
+        y = torch.clamp(y,0,1)
+        return y
+
 
 
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
@@ -144,8 +146,3 @@ if __name__ == "__main__":
 
     
 
-=======
-        y = self.conv2(y)
-        y = torch.clamp(y,0,1)
-        return y
->>>>>>> master:UNET.py
