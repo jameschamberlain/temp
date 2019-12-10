@@ -153,9 +153,11 @@ def main():
             f'ValLoss = {dev_loss:.4g}',
         )
     torch.save(model.state_dict(),
-               f"./models/UNET-B{BATCH_SIZE}e-{NUMBER_EPOCHS}-lr{EPSILON}-ssim-adam.pkl")
+               f"./vary-optim-models/UNET-lr{EPSILON}-adam.pkl")
     plt.plot(range(NUMBER_EPOCHS), train_losses)
     plt.plot(range(NUMBER_EPOCHS), val_losses)
+    plt.show()
+    plt.save(f"./vary-optim/plots/loss-variance-lr{EPSILON}-adam")
 
 
 if __name__ == "__main__":
