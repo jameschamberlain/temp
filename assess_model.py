@@ -1,10 +1,9 @@
 import torch
-import torch.nn as nn
 from torch.utils.data import DataLoader
 import matplotlib.pyplot as plt
 from utils.data_loader import MRIDataset, load_data_path, show_slices
 import fastMRI.functions.transforms as T
-import UNET
+from layers import UNET
 
 data_path_train = '/data/local/NC2019MRI/train'
 data_path_val = '/data/local/NC2019MRI/train'
@@ -20,7 +19,7 @@ val_loader = DataLoader(val_dataset, shuffle=True, batch_size=1, num_workers=num
 
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
-model = UNET.UNet(1,1,32).to(device)
+model = UNET.UNet(1, 1, 32).to(device)
 model.load_state_dict(torch.load("./models/UNET-Adam10"))
 model.eval()
 fig = plt.figure()

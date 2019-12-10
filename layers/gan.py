@@ -1,6 +1,9 @@
 import torch.nn as nn
 import torch
 import numpy as np
+from layers.UNET import UNet
+from layers.unet_down import UNetDown
+
 
 class GAN(nn.Module):
     def __init__(self,generator : nn.Module, discriminator : nn.Module, loss_func = nn.BCELoss()):
@@ -151,6 +154,22 @@ class GAN(nn.Module):
 
         return loss.detach().numpy().mean()
 
+
+class UNetGAN(nn.Module):
+    def __init__(self,c_in: int, c: int, image_size, n_fc_layers = 10, loss_func=nn.BCELoss()):
+        """
+
+        :param c_in:
+        :param c:
+        :param image_size: image_size in pixels
+        :param n_fc_layers:
+        """
+        self.generator = UNet(c_in,1,c)
+        self.discriminator = UNetDown(2,1,c,image_size,n_fc_layers)
+        self.model = GAN(generator=self.generator,discriminator=self.discriminator, loss_func=loss_func)
+
+    def forward(self,x):
+        return self.model.forward(x)
 
 def test():
     generator = nn.Sequential(nn.Linear(5,5,bias=False),nn.Sigmoid())

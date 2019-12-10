@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import hyper_param
 
 class UNetDown(nn.Module):
-    def __init__(self, c_in: int, c_out: int, c: int) -> None:
+    def __init__(self, c_in: int, c_out: int, c: int, n_fc_layers = 10) -> None:
         super().__init__()
         self.c_in = c_in
         self.c_out = c_out
@@ -35,6 +35,10 @@ class UNetDown(nn.Module):
             nn.ReLU(),
             nn.Dropout2d(self.drop_prob)
         )
+
+        fc_layers = []
+        for _ in range(n_fc_layers):
+                fc_layers.append(nn.Linear())
 
     def forward(self, x: Any, ):
         stack = []
