@@ -8,6 +8,27 @@ import torch
 from matplotlib import pyplot as plt
 
 
+def collate_batches(batch):
+    batch_len = len(batch)
+    data = torch.ones(batch_len, 1, 320, 320)
+    ret_list = torch.ones(batch_len, 1, 320, 320)
+
+    for i in range(batch_len):
+        input_value = batch[i][1]
+        input_value = T.complex_abs(input_value)
+        input_value = T.center_crop(input_value, (320, 320))
+        data[i, 0, :, :] = input_value
+
+        ret = batch[i][0]
+        ret = T.complex_abs(ret)
+        ret = T.center_crop(ret, (320, 320))
+        ret_list[i, 0, :, :] = ret
+
+
+
+    return ret_list, data, None, None, None
+
+
 def show_slices(data, slice_nums, cmap=None):  # visualisation
     fig = plt.figure(figsize=(15, 10))
     for i, num in enumerate(slice_nums):

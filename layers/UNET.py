@@ -18,13 +18,13 @@ import hyper_param
 
 class UNet(nn.Module):
 
-    def __init__(self, c_in: int, c_out: int, c: int) -> None:
+    def __init__(self, c_in: int, c_out: int, c: int, n_pool_layers: int, drop_prob: float) -> None:
         super().__init__()
         self.c_in = c_in
         self.c_out = c_out
         self.c = c
-        self.n_pool_layers = hyper_param.POOL_LAYERS
-        self.drop_prob = hyper_param.DROPOUT
+        self.n_pool_layers = n_pool_layers
+        self.drop_prob = drop_prob
         self.down_sample_layers = nn.ModuleList([ConvLayer(self.c_in, self.c, self.drop_prob)])
         channels = self.c
         for _ in range(self.n_pool_layers - 1):
@@ -64,6 +64,7 @@ class UNet(nn.Module):
             y = torch.cat([y, stack.pop()], dim=1)
             y = layer(y)
 
+<<<<<<< HEAD:layers/UNET.py
         return self.conv2(y)
 
 
@@ -143,3 +144,8 @@ if __name__ == "__main__":
 
     
 
+=======
+        y = self.conv2(y)
+        y = torch.clamp(y,0,1)
+        return y
+>>>>>>> master:UNET.py

@@ -1,4 +1,6 @@
 import torch
+import torch.nn as nn
+
 from torch.nn import functional as F
 import numpy as np
 from torch import optim
@@ -8,6 +10,7 @@ from torch.utils.data import DataLoader
 import pytorch_ssim
 from layers.UNET import UNet
 from utils.Net_Helpers import EarlyStopper
+
 from utils.data_loader import collate_batches, MRIDataset, load_data_path
 import matplotlib.pyplot as plt
 
@@ -37,12 +40,18 @@ def advance_epoch(model, data_loader, optimizer):
         output = model(img_in)
         # print(output.shape)
 
+<<<<<<< HEAD
         ssim_loss = 1 - pytorch_ssim.ssim(output, ground_truth)
         l1_loss = F.l1_loss(output,ground_truth)
         # loss = ssim_loss + l1_loss
         loss = np.sum(loss)
         optimizer.zero_grad()
         model.zero_grad()
+=======
+        loss = 1 - pytorch_ssim.ssim(output, ground_truth)
+        # loss = np.sum(loss)
+        optimizer.zero_grad()
+>>>>>>> master
         loss.backward()
         optimizer.step()
         losses.append(loss.item())
@@ -51,7 +60,11 @@ def advance_epoch(model, data_loader, optimizer):
     return np.average(losses)
 
 
+<<<<<<< HEAD
 def evaluate(device, model, data_loader, loss_func=pytorch_ssim.ssim):
+=======
+def evaluate(device, model, data_loader):
+>>>>>>> master
     model.eval()
     losses = []
 
@@ -62,17 +75,27 @@ def evaluate(device, model, data_loader, loss_func=pytorch_ssim.ssim):
             img_gt = img_gt.to(device)
             output = model(img_und)
 
+<<<<<<< HEAD
+=======
+            import fastMRI.functions.transforms as T
+
+>>>>>>> master
             # target = T.normalize() target
             # output = output
             # print(norm.shape)
 
+<<<<<<< HEAD
             loss = 1 - loss_func(output, img_gt)
+=======
+            loss = 1 - pytorch_ssim.ssim(output, img_gt)
+>>>>>>> master
             losses.append(loss.item())
     return np.mean(losses)
 
 
 CENTRE_FRACTION = 0.08
 ACCELERATION = 4
+<<<<<<< HEAD
 LR = 0.00001
 GAMMA = 0.1
 STEP_SIZE = 10
@@ -81,6 +104,15 @@ NUMBER_EPOCHS = 5000
 NUMBER_POOL_LAYERS = 10
 DROP_PROB = 0
 EARLY_STOPPING_TOLERANCE = 15
+=======
+EPSILON = 0.00001
+GAMMA = 0.1
+STEP_SIZE = 10
+BATCH_SIZE = 14
+NUMBER_EPOCHS = 30
+NUMBER_POOL_LAYERS = 4
+DROP_PROB = 0
+>>>>>>> master
 
 
 def main():
@@ -129,7 +161,11 @@ def main():
 
     criterion = pytorch_ssim.SSIM()
 
+<<<<<<< HEAD
     optimiser = optim.Adam(model.parameters(), lr=LR)
+=======
+    optimiser = optim.Adam(model.parameters(), lr=EPSILON)
+>>>>>>> master
     # optimiser = torch.optim.RMSprop(model.parameters(), EPSILON, weight_decay=0)
     # total_step = len(train_loader)
     # batch_loss = list()
@@ -141,9 +177,12 @@ def main():
     # scheduler = torch.optim.lr_scheduler.StepLR(optimizer=optimiser, step_size=STEP_SIZE, gamma=GAMMA)
     val_losses = []
     train_losses = []
+<<<<<<< HEAD
 
     stopper = EarlyStopper(EARLY_STOPPING_TOLERANCE)
 
+=======
+>>>>>>> master
     for epoch in range(0, NUMBER_EPOCHS):
         success(f"EPOCH: {epoch}")
         error("-" * 10)
@@ -152,6 +191,7 @@ def main():
         # scheduler.step(epoch)
         dev_loss = evaluate(device, model, val_loader)
         val_losses.append(dev_loss)
+<<<<<<< HEAD
 
         # this will stop the training set if the test set loss stops increasing
         if stopper.stop(dev_loss):
@@ -159,17 +199,26 @@ def main():
             print("STOPPING EARLY.")
             print("###############################")
             break
+=======
+>>>>>>> master
         # visualize(args, epoch, model, display_loader, writer)
         info(
             f'Epoch = [{epoch:4d}/{NUMBER_EPOCHS:4d}] TrainLoss = {train_loss:.4g} '
             f'ValLoss = {dev_loss:.4g}',
         )
     torch.save(model.state_dict(),
+<<<<<<< HEAD
                f"models/UNET-B{BATCH_SIZE}e-{NUMBER_EPOCHS}-lr{LR}-ssim-adam.pkl")
+=======
+               f"./models/UNET-B{BATCH_SIZE}e-{NUMBER_EPOCHS}-lr{EPSILON}-ssim-adam.pkl")
+>>>>>>> master
     plt.plot(range(NUMBER_EPOCHS), train_losses)
     plt.plot(range(NUMBER_EPOCHS), val_losses)
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
 if __name__ == "__main__":
     main()

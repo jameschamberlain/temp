@@ -1,35 +1,41 @@
 import torch
 from torch.utils.data import DataLoader
 import matplotlib.pyplot as plt
-from utils.data_loader import MRIDataset, load_data_path, show_slices
+from utils.data_loader import MRIDataset, load_data_path, show_slices, collate_batches
 import fastMRI.functions.transforms as T
 from layers import UNET
 
+
+# data_path_train = '/home/sam/datasets/FastMRI/NC2019MRI/train'
 data_path_train = '/data/local/NC2019MRI/train'
-data_path_val = '/data/local/NC2019MRI/train'
+
+data_path_val = data_path_train
 data_list = load_data_path(data_path_train, data_path_val)
 
-acc = 8
-cen_fract = 0.04
+acc = 4
+cen_fract = 0.08
 seed = False  # random masks for each slice
 num_workers = 8
 
 val_dataset = MRIDataset(data_list['val'], acceleration=acc, center_fraction=cen_fract, use_seed=seed)
-val_loader = DataLoader(val_dataset, shuffle=True, batch_size=1, num_workers=num_workers)
+val_loader = DataLoader(val_dataset, shuffle=True, batch_size=1, num_workers=num_workers, collate_fn=collate_batches)
 
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
-model = UNET.UNet(1, 1, 32).to(device)
-model.load_state_dict(torch.load("./models/UNET-Adam10"))
+
+model = UNET.UNet(1,1,32,4,0).to(device)
+model.load_state_dict(torch.load("./models/UNET-B14e-30-ssim-adam.pkl"))
+
 model.eval()
 fig = plt.figure()
 
 for i, sample in enumerate(val_loader):
     img_gt, img_und, rawdata_und, masks, norm = sample
-    img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).to(device)
+    img_in = img_und.to(device)
+    # img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).transpose(0,1).to(device)
 
     # input
-    A = T.center_crop(T.complex_abs(img_und), [320, 320]).squeeze()
+    A = img_und.squeeze()
     print(A.shape)
     
     # output
@@ -39,13 +45,13 @@ for i, sample in enumerate(val_loader):
     print(B.shape)
     
     # real
-    C = T.center_crop(T.complex_abs(img_gt), [320, 320]).squeeze()
+    C = img_gt.squeeze()
     print(C.shape)
     all_imgs = torch.stack([A.detach(), B.detach(), C.detach()], dim=0)
 
     # from left to right: mask, masked kspace, undersampled image, ground truth
     show_slices(all_imgs, [0, 1, 2], cmap='gray')
-    plt.show()
+    plt.savefig(f"./plots/{i}-b14e-30-ssim-img-02.png")
     plt.pause(1)
 
     if i >= 3: break  # show 4 random slices
