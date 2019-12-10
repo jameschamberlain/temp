@@ -154,8 +154,11 @@ def main():
         )
     torch.save(model.state_dict(),
                f"./vary-optim-models/UNET-lr{EPSILON}-adam.pkl")
-    plt.plot(range(NUMBER_EPOCHS), train_losses)
-    plt.plot(range(NUMBER_EPOCHS), val_losses)
+
+    plt.plot(range(NUMBER_EPOCHS), np.subtract(1, train_losses))
+    plt.plot(range(NUMBER_EPOCHS), np.subtract(1, val_losses))
+    plt.xlabel("Epochs")
+    plt.ylabel("loss, ssim")
     plt.show()
     plt.save(f"./vary-optim/plots/loss-variance-lr{EPSILON}-adam")
 
