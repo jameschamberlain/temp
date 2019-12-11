@@ -1,13 +1,17 @@
 import pickle
 import matplotlib.pyplot as plt
 
-TRAIN_LOSS = pickle.load(open("./vary-optim/pickles/train_loss_adamW.pkl",
+optimiser = "adam"
+
+TRAIN_LOSS = pickle.load(open(f"./vary-optim/pickles/train_loss_{optimiser}.pkl",
                               'rb'))
-VAL_LOSS = pickle.load(open("./vary-optim/pickles/val_loss_adamW.pkl", 'rb'))
+VAL_LOSS = pickle.load(open(f"./vary-optim/pickles/val_loss_{optimiser}.pkl", 'rb'))
 
 plt.xlabel('Epochs')
-plt.ylabel('loss, ssim')
-plt.title('Using AdamW optimiser')
+plt.ylabel('loss, DSSIM')
+# plt.ylim(0,max(TRAIN_LOSS))
+plt.title(f'Using {optimiser} optimiser')
 plt.plot(TRAIN_LOSS,'b-')
 plt.plot(VAL_LOSS,'r-')
+plt.savefig(f"./vary-optim/plots/{optimiser}.png")
 plt.show()
