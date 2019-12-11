@@ -10,6 +10,7 @@ import pytorch_ssim
 from UNET import UNet
 from utils.data_loader import collate_batches, MRIDataset, load_data_path
 import matplotlib.pyplot as plt
+import pickle
 
 RED = '\033[0;31m'
 GREEN = '\033[0;32m'
@@ -72,7 +73,7 @@ def evaluate(device, model, data_loader):
 
 CENTRE_FRACTION = 0.08
 ACCELERATION = 4
-EPSILON = 0.00001
+EPSILON = 0.001
 GAMMA = 0.1
 STEP_SIZE = 10
 BATCH_SIZE = 14
@@ -152,10 +153,23 @@ def main():
             f'Epoch = [{epoch:4d}/{NUMBER_EPOCHS:4d}] TrainLoss = {train_loss:.4g} '
             f'ValLoss = {dev_loss:.4g}',
         )
-    torch.save(model.state_dict(),
-               f"./models/UNET-B{BATCH_SIZE}e-{NUMBER_EPOCHS}-lr{EPSILON}-ssim-adam.pkl")
+    
+    name = f'UNET-B{BATCH_SIZE}-e{NUMBER_EPOCHS}-lr{EPSILON}-ssim-adam-II'
+    # save model
+    torch.save(model.state_dict(),f"./vary-lr/models/{name}.pkl")
+
+    # save losses
+    with open(f'./vary-lr/pickle/{name}-train.pkl', 'wb') as f:
+        pickle.dump(train_losses, f)
+    with open(f'./vary-lr/pickle/{name}-val.pkl', 'wb') as f:
+        pickle.dump(val_losses, f)
+
+    # save plots
     plt.plot(range(NUMBER_EPOCHS), train_losses)
     plt.plot(range(NUMBER_EPOCHS), val_losses)
+    plt.xlabel("Epochs")
+    plt.ylabel("loss, ssim")
+    plt.savefig(f'./vary-lr/diagrams/{name}.png')
 
 
 if __name__ == "__main__":

@@ -1,0 +1,11 @@
+[0;33mData loading...[0m
+[0;32mData loaded[0m
+[0;33mConstructing model[0m
+[0;32mConstructed model[0m
+[0;33mStarting training[0m
+[0;32mEPOCH: 0[0m
+[0;31m----------[0m
+Epoch = [   0/   2] TrainLoss = 0.5771 ValLoss = 0.4755
+[0;32mEPOCH: 1[0m
+[0;31m----------[0m
+Epoch = [   1/   2] TrainLoss = 0.4528 ValLoss = 0.4383
