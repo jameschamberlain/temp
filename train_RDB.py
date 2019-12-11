@@ -8,6 +8,7 @@ from torch.autograd import Variable
 from torch.utils.data import DataLoader
 
 import pytorch_ssim
+from layers.ResidualDenseBlock import RDN
 from layers.UNET import UNet
 from utils.Net_Helpers import EarlyStopper
 
@@ -37,9 +38,9 @@ def advance_epoch(model, data_loader, optimizer):
     for iter, data in enumerate(data_loader):
         img_gt, img_und, rawdata_und, masks, norm = data
 
-        # img_in = Variable(torch.FloatTensor(img_und)).cuda()
-        img_in = torch.FloatTensor(img_und).cuda(0)
-        ground_truth = torch.FloatTensor(img_gt).cuda(0)
+        #img_in = Variable(torch.FloatTensor(img_und)).cuda()
+        img_in = torch.FloatTensor(img_und).cuda()
+        ground_truth = torch.FloatTensor(img_gt).cuda()
         # print(img_in.shape)
         # print(ground_truth.shape)
         output = model.forward(img_in)
@@ -77,13 +78,13 @@ def evaluate(device, model, data_loader):
 
 CENTRE_FRACTION = 0.08
 ACCELERATION = 4
-LR = 0.00001
+LR = 0.0001
 GAMMA = 0.1
 STEP_SIZE = 10
-BATCH_SIZE = 5
+BATCH_SIZE = 7
 NUMBER_EPOCHS = 5000
 DROP_PROB = 0
-NUMBER_POOL_LAYERS = 10
+NUMBER_POOL_LAYERS = 8
 EARLY_STOPPING_TOLERANCE = 15
 
 
@@ -129,7 +130,7 @@ def main():
 
 
     warn("Constructing model")
-    model = UNet(1, 1, 32, NUMBER_POOL_LAYERS, DROP_PROB).to(DEVICE)
+    model = RDN(1).cuda()
     success("Constructed model")
 
     criterion = pytorch_ssim.SSIM()
