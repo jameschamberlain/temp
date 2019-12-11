@@ -1,11 +1,11 @@
 import pickle
 import matplotlib.pyplot as plt
 import pandas as pd
-optimisers = ['adagrad','adam','adamax','adamW','ASGD']
+optimisers = ['adagrad','adam','adamax','adamW','ASGD','SGD']
 
 train_losses = []
 val_losses = []
-df=pd.DataFrame({'adagrad': {'train':[], 'val':[]}, 'adam': {'train':[], 'val':[]}, 'adamax': {'train':[], 'val':[]}, 'adamW': {'train':[], 'val':[]}, 'ASGD': {'train':[], 'val':[]} })
+df=pd.DataFrame({'adagrad': {'train':[], 'val':[]}, 'adam': {'train':[], 'val':[]}, 'adamax': {'train':[], 'val':[]}, 'adamW': {'train':[], 'val':[]}, 'ASGD': {'train':[], 'val':[]},'SGD': {'train':[], 'val':[]}  })
 for optimiser in optimisers:
     
     df[optimiser]['train'] = pickle.load(open(f"./vary-optim/pickles/train_loss_{optimiser}.pkl",'rb'))
@@ -14,7 +14,7 @@ for optimiser in optimisers:
 # print(df)
 plt.xlabel('Epochs')
 plt.ylabel('loss, DSSIM')
-colours = ['b','g','r','c','m']
+colours = ['b','g','r','c','m','y']
 
 for optimiser in optimisers:
     for phase in df[optimiser].keys():

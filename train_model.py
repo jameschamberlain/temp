@@ -33,6 +33,8 @@ def advance_epoch(model, data_loader, optimizer):
     model.train()
     losses = []
     avg_loss = 0.
+    criterion = nn.L1Loss()
+
 
     for iter, data in enumerate(data_loader):
         img_gt, img_und, rawdata_und, masks, norm = data
@@ -44,8 +46,8 @@ def advance_epoch(model, data_loader, optimizer):
         # print(ground_truth.shape)
         output = model(img_in)
         # print(output.shape)
-
-        loss = 1 - pytorch_ssim.ssim(output, ground_truth)
+        
+        loss = criterion(output, ground_truth)
         # loss = np.sum(loss)
         optimizer.zero_grad()
         loss.backward()
@@ -59,6 +61,7 @@ def advance_epoch(model, data_loader, optimizer):
 def evaluate(device, model, data_loader):
     model.eval()
     losses = []
+    criterion = nn.L1Loss()
 
     with torch.no_grad():
         for iter, data in enumerate(data_loader):
@@ -73,7 +76,7 @@ def evaluate(device, model, data_loader):
             # output = output
             # print(norm.shape)
 
-            loss = 1 - pytorch_ssim.ssim(output, img_gt)
+            loss = criterion(output, img_gt)
             losses.append(loss.item())
     return np.mean(losses)
 
@@ -97,8 +100,8 @@ def plot_graph(train_loss,val_loss):
 
 
     plt.xlabel("Epochs")
-    plt.ylabel("loss, ssim")
-    plt.title("Using SGD Optimiser")
+    plt.ylabel("loss, L1")
+    plt.title("Using L1 Loss")
     plt.show()
 
 def main():
@@ -145,9 +148,10 @@ def main():
     model = UNet(1, 1, 32, NUMBER_POOL_LAYERS, DROP_PROB).to(device)
     success("Constructed model")
 
-    criterion = pytorch_ssim.SSIM()
-    optimiser = optim.SGD(model.parameters(),lr=EPSILON)
-    # optimiser = optim.Adam(model.parameters(), lr=EPSILON)
+    # criterion = pytorch_ssim.SSIM()
+    criterion = nn.L1Loss()
+    # optimiser = optim.SGD(model.parameters(),lr=EPSILON)
+    optimiser = optim.Adam(model.parameters(), lr=EPSILON)
     #optimiser = optim.AdamW(params=model.parameters(), lr=EPSILON)
     # optimiser = optim.Adagrad(params=model.parameters(), lr=EPSILON, lr_decay=EPSILON/NUMBER_EPOCHS)
     # optimiser = optim.ASGD(params=model.parameters(),lr=EPSILON)
@@ -178,7 +182,7 @@ def main():
         )
     
     torch.save(model.state_dict(),
-               f"./vary-optim/models/UNET-lr{EPSILON}-SGD.pkl")
+               f"./vary-optim/models/UNET-lr{EPSILON}-L1.pkl")
     # x = range(1, NUMBER_EPOCHS)
     # print(train_losses)
     # print(val_losses)
@@ -194,10 +198,10 @@ def main():
     # plt.plot('epochs','val loss','r-')
     # plt.legend()
 
-    plt.savefig(f"./vary-optim/plots/loss-variance-lr{EPSILON}-SGD.png")
-    with open("./vary-optim/pickles/train_loss_SGD.pkl",'wb') as f:
+    plt.savefig(f"./vary-optim/plots/loss-variance-lr{EPSILON}-L1.png")
+    with open("./vary-optim/pickles/train_loss_L1.pkl",'wb') as f:
         pickle.dump(train_losses,f)
-    with open("./vary-optim/pickles/val_loss_SGD.pkl",'wb') as f:
+    with open("./vary-optim/pickles/val_loss_L1.pkl",'wb') as f:
         pickle.dump(val_losses,f)
     
 
