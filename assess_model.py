@@ -5,11 +5,10 @@ import matplotlib.pyplot as plt
 from utils.data_loader import MRIDataset, load_data_path, show_slices, collate_batches
 import fastMRI.functions.transforms as T
 import UNET
-
+import pytorch_ssim
 
 # data_path_train = '/home/sam/datasets/FastMRI/NC2019MRI/train'
 data_path_train = '/data/local/NC2019MRI/train'
-
 data_path_val = data_path_train
 data_list = load_data_path(data_path_train, data_path_val)
 
@@ -23,34 +22,46 @@ val_loader = DataLoader(val_dataset, shuffle=True, batch_size=1, num_workers=num
 
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
+lr = "0.01"
+
 model = UNET.UNet(1,1,32,4,0).to(device)
-model.load_state_dict(torch.load("./models/UNET-B14e-30-ssim-adam.pkl"))
+name = f'UNET-B14-e30-lr{lr}-ssim-adam'
+model.load_state_dict(torch.load(f"./vary-lr/models/{name}.pkl"))
 model.eval()
 fig = plt.figure()
 
+counter= 0
+ssims = []
 for i, sample in enumerate(val_loader):
     img_gt, img_und, rawdata_und, masks, norm = sample
     img_in = img_und.to(device)
-    # img_in = T.center_crop(T.complex_abs(img_und).unsqueeze(0), [320, 320]).transpose(0,1).to(device)
 
     # input
     A = img_und.squeeze()
-    print(A.shape)
+    # print(A.shape)
     
     # output
     output = model(img_in)
-    print(output.shape)
+    # print(output.shape)
     B = output.squeeze().cpu()
-    print(B.shape)
-    
+    # print(B.shape)
+
+    ssim = pytorch_ssim.ssim(output,img_gt.to(device))
+    print(type(ssim.item()))
+    ssims.append(ssim.item())
+    print(f"SSIM of this image is {ssim}")
+
     # real
     C = img_gt.squeeze()
-    print(C.shape)
+    # print(C.shape)
     all_imgs = torch.stack([A.detach(), B.detach(), C.detach()], dim=0)
 
     # from left to right: mask, masked kspace, undersampled image, ground truth
-    show_slices(all_imgs, [0, 1, 2], cmap='gray')
-    plt.savefig(f"./plots/{i}-b14e-30-ssim-img-02.png")
-    plt.pause(1)
+    if ssim > 0.8 and counter <=3:
+        show_slices(all_imgs, [0, 1, 2], cmap='gray')
+        plt.savefig(f"./vary-lr/reconstructions/lr{lr}-ssim-{ssim:.2f}.png")
+        plt.pause(1)
+        counter += 1
 
-    if i >= 3: break  # show 4 random slices
+    # if counter >= 3: break  # show 4 random slices
+print(f"Max ssim : {max(ssims)}")
