@@ -15,6 +15,8 @@ from utils.Net_Helpers import EarlyStopper
 from utils.data_loader import collate_batches, MRIDataset, load_data_path
 import matplotlib.pyplot as plt
 
+import sys
+
 torch.backends.cudnn.enabled = False
 
 RED = '\033[0;31m'
@@ -28,19 +30,36 @@ error = lambda x: print(RED + x + ENDC)
 
 DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
+def loading_bar(percentage):
+    length = 30.0
+    bar = "|"
+    increment = 1 / length
+    current = increment
+    while percentage > current and current <= 1.0:
+        bar += "#"
+        current += increment
+    while current <= 1.0:
+        bar += " "
+        current += increment
+    bar += "|"
+    sys.stdout.write("\r" + bar + "\n")
 
 
 def advance_epoch(model, data_loader, optimizer):
     model.train()
     losses = []
     avg_loss = 0.
-
+    n_batches = len(data_loader)
+    print("BATCH PROGRESS:")
     for iter, data in enumerate(data_loader):
+        loading_bar(iter / n_batches)
         img_gt, img_und, rawdata_und, masks, norm = data
 
         #img_in = Variable(torch.FloatTensor(img_und)).cuda()
         img_in = torch.FloatTensor(img_und).cuda()
         ground_truth = torch.FloatTensor(img_gt).cuda()
+        img_in.requires_grad = True
+        ground_truth.requires_grad = True
         # print(img_in.shape)
         # print(ground_truth.shape)
         output = model.forward(img_in)
@@ -50,18 +69,22 @@ def advance_epoch(model, data_loader, optimizer):
         ssim_loss = 1 - pytorch_ssim.ssim(output, ground_truth)
         l1_loss = F.l1_loss(output,ground_truth)
         loss = ssim_loss + l1_loss
+
+        loss.backward()
         optimizer.zero_grad()
         model.zero_grad()
 
-        loss.backward()
         optimizer.step()
-        losses.append(loss.item())
+        losses.append(loss.cpu().item())
         avg_loss = 0.99 * avg_loss + 0.01 * loss.item() if iter > 0 else loss.item()
+        torch.cuda.empty_cache()
+
 
     return np.average(losses)
 
 
 def evaluate(device, model, data_loader):
+    print("EVALUATING")
     model.eval()
     losses = []
 
@@ -81,7 +104,7 @@ ACCELERATION = 4
 LR = 0.0001
 GAMMA = 0.1
 STEP_SIZE = 10
-BATCH_SIZE = 7
+BATCH_SIZE = 4
 NUMBER_EPOCHS = 5000
 DROP_PROB = 0
 NUMBER_POOL_LAYERS = 8
