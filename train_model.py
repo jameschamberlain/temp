@@ -33,7 +33,7 @@ def advance_epoch(model, data_loader, optimizer):
     model.train()
     losses = []
     avg_loss = 0.
-    criterion = nn.L1Loss()
+    criterion = nn.MSELoss()
 
 
     for iter, data in enumerate(data_loader):
@@ -61,7 +61,7 @@ def advance_epoch(model, data_loader, optimizer):
 def evaluate(device, model, data_loader):
     model.eval()
     losses = []
-    criterion = nn.L1Loss()
+    criterion = nn.MSELoss()
 
     with torch.no_grad():
         for iter, data in enumerate(data_loader):
@@ -100,8 +100,8 @@ def plot_graph(train_loss,val_loss):
 
 
     plt.xlabel("Epochs")
-    plt.ylabel("loss, L1")
-    plt.title("Using L1 Loss")
+    plt.ylabel("loss, L2")
+    plt.title("Using L2 Loss")
     plt.show()
 
 def main():
@@ -149,7 +149,7 @@ def main():
     success("Constructed model")
 
     # criterion = pytorch_ssim.SSIM()
-    criterion = nn.L1Loss()
+    criterion = nn.MSELoss()
     # optimiser = optim.SGD(model.parameters(),lr=EPSILON)
     optimiser = optim.Adam(model.parameters(), lr=EPSILON)
     #optimiser = optim.AdamW(params=model.parameters(), lr=EPSILON)
@@ -182,7 +182,7 @@ def main():
         )
     
     torch.save(model.state_dict(),
-               f"./vary-optim/models/UNET-lr{EPSILON}-L1.pkl")
+               f"./vary-loss/models/UNET-lr{EPSILON}-L2.pkl")
     # x = range(1, NUMBER_EPOCHS)
     # print(train_losses)
     # print(val_losses)
@@ -198,10 +198,10 @@ def main():
     # plt.plot('epochs','val loss','r-')
     # plt.legend()
 
-    plt.savefig(f"./vary-optim/plots/loss-variance-lr{EPSILON}-L1.png")
-    with open("./vary-optim/pickles/train_loss_L1.pkl",'wb') as f:
+    plt.savefig(f"./vary-loss/plots/loss-variance-lr{EPSILON}-L2.png")
+    with open("./vary-loss/pickles/train_loss_L2.pkl",'wb') as f:
         pickle.dump(train_losses,f)
-    with open("./vary-optim/pickles/val_loss_L1.pkl",'wb') as f:
+    with open("./vary-loss/pickles/val_loss_L2.pkl",'wb') as f:
         pickle.dump(val_losses,f)
     
 

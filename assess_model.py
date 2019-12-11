@@ -25,7 +25,7 @@ val_loader = DataLoader(val_dataset, shuffle=True, batch_size=1, num_workers=num
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 optimiser = 'L1'
 model = UNET.UNet(1,1,32,4,0).to(device)
-model.load_state_dict(torch.load(f"./vary-optim/models/UNET-lr0.0001-{optimiser}.pkl"))
+model.load_state_dict(torch.load(f"./vary-loss/models/UNET-lr0.0001-{optimiser}.pkl"))
 model.eval()
 fig = plt.figure()
 counter= 0
@@ -56,7 +56,7 @@ for i, sample in enumerate(val_loader):
     # from left to right: mask, masked kspace, undersampled image, ground truth
     if ssim > 0.9 and counter <=3:
         show_slices(all_imgs, [0, 1, 2], cmap='gray')
-        # plt.savefig(f"./vary-optim/reconstructions/{optimiser}-ssim/{ssim:.2f}-{optimiser}30.png")
+        plt.savefig(f"./vary-loss/reconstructions/{optimiser}-ssim/{ssim:.2f}-{optimiser}30.png")
         plt.pause(1)
         counter += 1
 
