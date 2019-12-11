@@ -33,7 +33,7 @@ def advance_epoch(model, data_loader, optimizer):
     model.train()
     losses = []
     avg_loss = 0.
-    criterion = nn.MSELoss()
+    criterion = pytorch_ssim.SSIM()
 
 
     for iter, data in enumerate(data_loader):
@@ -47,7 +47,7 @@ def advance_epoch(model, data_loader, optimizer):
         output = model(img_in)
         # print(output.shape)
         
-        loss = criterion(output, ground_truth)
+        loss = 1- criterion(output, ground_truth)
         # loss = np.sum(loss)
         optimizer.zero_grad()
         loss.backward()
@@ -61,7 +61,7 @@ def advance_epoch(model, data_loader, optimizer):
 def evaluate(device, model, data_loader):
     model.eval()
     losses = []
-    criterion = nn.MSELoss()
+    criterion = pytorch_ssim.SSIM()
 
     with torch.no_grad():
         for iter, data in enumerate(data_loader):
@@ -76,13 +76,14 @@ def evaluate(device, model, data_loader):
             # output = output
             # print(norm.shape)
 
-            loss = criterion(output, img_gt)
+            loss = 1- criterion(output, img_gt)
+
             losses.append(loss.item())
     return np.mean(losses)
 
 
-CENTRE_FRACTION = 0.08
-ACCELERATION = 4
+CENTRE_FRACTION = 0.04
+ACCELERATION =8 
 EPSILON = 0.0001
 GAMMA = 0.1
 STEP_SIZE = 10
@@ -100,8 +101,8 @@ def plot_graph(train_loss,val_loss):
 
 
     plt.xlabel("Epochs")
-    plt.ylabel("loss, L2")
-    plt.title("Using L2 Loss")
+    plt.ylabel("loss, SSIM")
+    plt.title("Using base params with 8x acceleration")
     plt.show()
 
 def main():
@@ -148,8 +149,8 @@ def main():
     model = UNet(1, 1, 32, NUMBER_POOL_LAYERS, DROP_PROB).to(device)
     success("Constructed model")
 
-    # criterion = pytorch_ssim.SSIM()
-    criterion = nn.MSELoss()
+    criterion = pytorch_ssim.SSIM()
+    #criterion = nn.MSELoss()
     # optimiser = optim.SGD(model.parameters(),lr=EPSILON)
     optimiser = optim.Adam(model.parameters(), lr=EPSILON)
     #optimiser = optim.AdamW(params=model.parameters(), lr=EPSILON)
@@ -198,10 +199,10 @@ def main():
     # plt.plot('epochs','val loss','r-')
     # plt.legend()
 
-    plt.savefig(f"./vary-loss/plots/loss-variance-lr{EPSILON}-L2.png")
-    with open("./vary-loss/pickles/train_loss_L2.pkl",'wb') as f:
+    plt.savefig(f"./vary-loss/plots/loss-variance-lr{EPSILON}-8x.png")
+    with open("./vary-loss/pickles/train_loss_8x.pkl",'wb') as f:
         pickle.dump(train_losses,f)
-    with open("./vary-loss/pickles/val_loss_L2.pkl",'wb') as f:
+    with open("./vary-loss/pickles/val_loss_8x.pkl",'wb') as f:
         pickle.dump(val_losses,f)
     
 
