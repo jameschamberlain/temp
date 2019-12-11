@@ -42,7 +42,7 @@ def loading_bar(percentage):
         bar += " "
         current += increment
     bar += "|"
-    sys.stdout.write("\r" + bar + "\n")
+    sys.stdout.write("\r" + bar)
 
 
 def advance_epoch(model, data_loader, optimizer):
@@ -79,7 +79,7 @@ def advance_epoch(model, data_loader, optimizer):
         avg_loss = 0.99 * avg_loss + 0.01 * loss.item() if iter > 0 else loss.item()
         torch.cuda.empty_cache()
 
-
+    print("")
     return np.average(losses)
 
 
@@ -87,15 +87,18 @@ def evaluate(device, model, data_loader):
     print("EVALUATING")
     model.eval()
     losses = []
-
+    print("")
     with torch.no_grad():
         for iter, data in enumerate(data_loader):
+            loading_bar(iter / len(data_loader))
             img_gt, img_und, rawdata_und, masks, norm = data
             img_und = img_und.to(device)
             img_gt = img_gt.to(device)
             output = model(img_und)
             loss = 1 - pytorch_ssim.ssim(output, img_gt)
             losses.append(loss.item())
+
+    torch.cuda.empty_cache()
     return np.mean(losses)
 
 
