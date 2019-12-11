@@ -98,7 +98,7 @@ def plot_graph(train_loss,val_loss):
 
     plt.xlabel("Epochs")
     plt.ylabel("loss, ssim")
-    plt.title("Using ASGD Optimiser")
+    plt.title("Using SGD Optimiser")
     plt.show()
 
 def main():
@@ -146,11 +146,11 @@ def main():
     success("Constructed model")
 
     criterion = pytorch_ssim.SSIM()
-    # optimiser = optim.SGD(model.parameters(),lr=EPSILON)
+    optimiser = optim.SGD(model.parameters(),lr=EPSILON)
     # optimiser = optim.Adam(model.parameters(), lr=EPSILON)
     #optimiser = optim.AdamW(params=model.parameters(), lr=EPSILON)
     # optimiser = optim.Adagrad(params=model.parameters(), lr=EPSILON, lr_decay=EPSILON/NUMBER_EPOCHS)
-    optimiser = optim.ASGD(params=model.parameters(),lr=EPSILON)
+    # optimiser = optim.ASGD(params=model.parameters(),lr=EPSILON)
     #optimiser = optim.Adamax(model.parameters(), lr=EPSILON)
     # optimiser = torch.optim.RMSprop(model.parameters(), EPSILON, weight_decay=0)
     # total_step = len(train_loader)
@@ -178,7 +178,7 @@ def main():
         )
     
     torch.save(model.state_dict(),
-               f"./vary-optim/models/UNET-lr{EPSILON}-ASGD.pkl")
+               f"./vary-optim/models/UNET-lr{EPSILON}-SGD.pkl")
     # x = range(1, NUMBER_EPOCHS)
     # print(train_losses)
     # print(val_losses)
@@ -194,10 +194,10 @@ def main():
     # plt.plot('epochs','val loss','r-')
     # plt.legend()
 
-    plt.savefig(f"./vary-optim/plots/loss-variance-lr{EPSILON}-ASGD.png")
-    with open("./vary-optim/pickles/train_loss_ASGD.pkl",'wb') as f:
+    plt.savefig(f"./vary-optim/plots/loss-variance-lr{EPSILON}-SGD.png")
+    with open("./vary-optim/pickles/train_loss_SGD.pkl",'wb') as f:
         pickle.dump(train_losses,f)
-    with open("./vary-optim/pickles/val_loss_ASGD.pkl",'wb') as f:
+    with open("./vary-optim/pickles/val_loss_SGD.pkl",'wb') as f:
         pickle.dump(val_losses,f)
     
 
