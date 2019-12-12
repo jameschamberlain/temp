@@ -33,8 +33,8 @@ def advance_epoch(model, data_loader, optimizer):
     model.train()
     losses = []
     avg_loss = 0.
-    criterion = pytorch_ssim.SSIM()
-
+    criterion = [pytorch_ssim.SSIM(), nn.L1Loss()]
+    alpha = 0.84
 
     for iter, data in enumerate(data_loader):
         img_gt, img_und, rawdata_und, masks, norm = data
@@ -47,7 +47,8 @@ def advance_epoch(model, data_loader, optimizer):
         output = model(img_in)
         # print(output.shape)
         
-        loss = 1- criterion(output, ground_truth)
+
+        loss = (alpha * (1-criterion[0](output, ground_truth))) + (1-alpha)*criterion[1](output,ground_truth)
         # loss = np.sum(loss)
         optimizer.zero_grad()
         loss.backward()
@@ -61,8 +62,8 @@ def advance_epoch(model, data_loader, optimizer):
 def evaluate(device, model, data_loader):
     model.eval()
     losses = []
-    criterion = pytorch_ssim.SSIM()
-
+    criterion = [pytorch_ssim.SSIM(), nn.L1Loss()]
+    alpha = 0.84
     with torch.no_grad():
         for iter, data in enumerate(data_loader):
             img_gt, img_und, rawdata_und, masks, norm = data
@@ -76,7 +77,7 @@ def evaluate(device, model, data_loader):
             # output = output
             # print(norm.shape)
 
-            loss = 1- criterion(output, img_gt)
+            loss = (alpha* (1-criterion[0](output, img_gt))) + (1-alpha)*(criterion[1](output,img_gt))
 
             losses.append(loss.item())
     return np.mean(losses)
@@ -101,8 +102,8 @@ def plot_graph(train_loss,val_loss):
 
 
     plt.xlabel("Epochs")
-    plt.ylabel("loss, SSIM")
-    plt.title("Using base params with 8x acceleration")
+    plt.ylabel("loss, DSSIM + L1")
+    plt.title("Using base params with SSIM and L1 as loss functions")
     plt.show()
 
 def main():
@@ -151,8 +152,8 @@ def main():
 
     criterion = pytorch_ssim.SSIM()
     #criterion = nn.MSELoss()
-    # optimiser = optim.SGD(model.parameters(),lr=EPSILON)
-    optimiser = optim.Adam(model.parameters(), lr=EPSILON)
+    optimiser = optim.SGD(model.parameters(),lr=EPSILON,momentum=0.9)
+    #optimiser = optim.Adam(model.parameters(), lr=EPSILON)
     #optimiser = optim.AdamW(params=model.parameters(), lr=EPSILON)
     # optimiser = optim.Adagrad(params=model.parameters(), lr=EPSILON, lr_decay=EPSILON/NUMBER_EPOCHS)
     # optimiser = optim.ASGD(params=model.parameters(),lr=EPSILON)
@@ -199,10 +200,10 @@ def main():
     # plt.plot('epochs','val loss','r-')
     # plt.legend()
 
-    plt.savefig(f"./vary-loss/plots/loss-variance-lr{EPSILON}-8x.png")
-    with open("./vary-loss/pickles/train_loss_8x.pkl",'wb') as f:
+    plt.savefig(f"./vary-loss/plots/loss-variance-lr{EPSILON}-SSIML1.png")
+    with open("./vary-loss/pickles/train_loss_SSIML1.pkl",'wb') as f:
         pickle.dump(train_losses,f)
-    with open("./vary-loss/pickles/val_loss_8x.pkl",'wb') as f:
+    with open("./vary-optim/pickles/val_loss_SSIML1.pkl",'wb') as f:
         pickle.dump(val_losses,f)
     
 
