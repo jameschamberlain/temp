@@ -1,0 +1,344 @@
+[0;33mData loading...[0m
+[0;32mData loaded[0m
+[0;33mConstructing model[0m
+[0;32mConstructed model[0m
+[0;33mStarting training[0m
+[0;32mEPOCH: 0[0m
+[0;31m----------[0m
+Epoch = [   1/ 100] TrainLoss = 0.6686 ValLoss = 0.603
+[0;32mEPOCH: 1[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [   2/ 100] TrainLoss = 0.5925 ValLoss = 0.5823
+[0;32mEPOCH: 2[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [   3/ 100] TrainLoss = 0.5794 ValLoss = 0.574
+[0;32mEPOCH: 3[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [   4/ 100] TrainLoss = 0.571 ValLoss = 0.5676
+[0;32mEPOCH: 4[0m
+[0;31m----------[0m
+Epoch = [   5/ 100] TrainLoss = 0.5657 ValLoss = 0.5697
+[0;32mEPOCH: 5[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [   6/ 100] TrainLoss = 0.5619 ValLoss = 0.5592
+[0;32mEPOCH: 6[0m
+[0;31m----------[0m
+Epoch = [   7/ 100] TrainLoss = 0.5569 ValLoss = 0.5604
+[0;32mEPOCH: 7[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [   8/ 100] TrainLoss = 0.5548 ValLoss = 0.5536
+[0;32mEPOCH: 8[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [   9/ 100] TrainLoss = 0.5532 ValLoss = 0.5527
+[0;32mEPOCH: 9[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  10/ 100] TrainLoss = 0.552 ValLoss = 0.5526
+[0;32mEPOCH: 10[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  11/ 100] TrainLoss = 0.5499 ValLoss = 0.5482
+[0;32mEPOCH: 11[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  12/ 100] TrainLoss = 0.5489 ValLoss = 0.5472
+[0;32mEPOCH: 12[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  13/ 100] TrainLoss = 0.547 ValLoss = 0.5451
+[0;32mEPOCH: 13[0m
+[0;31m----------[0m
+Epoch = [  14/ 100] TrainLoss = 0.546 ValLoss = 0.5461
+[0;32mEPOCH: 14[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  15/ 100] TrainLoss = 0.5457 ValLoss = 0.5442
+[0;32mEPOCH: 15[0m
+[0;31m----------[0m
+Epoch = [  16/ 100] TrainLoss = 0.5446 ValLoss = 0.5453
+[0;32mEPOCH: 16[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  17/ 100] TrainLoss = 0.5425 ValLoss = 0.542
+[0;32mEPOCH: 17[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  18/ 100] TrainLoss = 0.5421 ValLoss = 0.5415
+[0;32mEPOCH: 18[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  19/ 100] TrainLoss = 0.5419 ValLoss = 0.5408
+[0;32mEPOCH: 19[0m
+[0;31m----------[0m
+Epoch = [  20/ 100] TrainLoss = 0.5399 ValLoss = 0.5414
+[0;32mEPOCH: 20[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  21/ 100] TrainLoss = 0.5415 ValLoss = 0.5401
+[0;32mEPOCH: 21[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  22/ 100] TrainLoss = 0.5398 ValLoss = 0.5379
+[0;32mEPOCH: 22[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  23/ 100] TrainLoss = 0.5385 ValLoss = 0.537
+[0;32mEPOCH: 23[0m
+[0;31m----------[0m
+Epoch = [  24/ 100] TrainLoss = 0.5404 ValLoss = 0.5442
+[0;32mEPOCH: 24[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  25/ 100] TrainLoss = 0.5375 ValLoss = 0.5369
+[0;32mEPOCH: 25[0m
+[0;31m----------[0m
+Epoch = [  26/ 100] TrainLoss = 0.5367 ValLoss = 0.5381
+[0;32mEPOCH: 26[0m
+[0;31m----------[0m
+Epoch = [  27/ 100] TrainLoss = 0.5375 ValLoss = 0.5372
+[0;32mEPOCH: 27[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  28/ 100] TrainLoss = 0.5362 ValLoss = 0.5364
+[0;32mEPOCH: 28[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  29/ 100] TrainLoss = 0.5368 ValLoss = 0.5349
+[0;32mEPOCH: 29[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  30/ 100] TrainLoss = 0.5352 ValLoss = 0.5341
+[0;32mEPOCH: 30[0m
+[0;31m----------[0m
+Epoch = [  31/ 100] TrainLoss = 0.5353 ValLoss = 0.5346
+[0;32mEPOCH: 31[0m
+[0;31m----------[0m
+Epoch = [  32/ 100] TrainLoss = 0.5335 ValLoss = 0.5343
+[0;32mEPOCH: 32[0m
+[0;31m----------[0m
+Epoch = [  33/ 100] TrainLoss = 0.5354 ValLoss = 0.5345
+[0;32mEPOCH: 33[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  34/ 100] TrainLoss = 0.5336 ValLoss = 0.5341
+[0;32mEPOCH: 34[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  35/ 100] TrainLoss = 0.5334 ValLoss = 0.534
+[0;32mEPOCH: 35[0m
+[0;31m----------[0m
+Epoch = [  36/ 100] TrainLoss = 0.5342 ValLoss = 0.5348
+[0;32mEPOCH: 36[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  37/ 100] TrainLoss = 0.534 ValLoss = 0.5321
+[0;32mEPOCH: 37[0m
+[0;31m----------[0m
+Epoch = [  38/ 100] TrainLoss = 0.5341 ValLoss = 0.5332
+[0;32mEPOCH: 38[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  39/ 100] TrainLoss = 0.5316 ValLoss = 0.5312
+[0;32mEPOCH: 39[0m
+[0;31m----------[0m
+Epoch = [  40/ 100] TrainLoss = 0.5324 ValLoss = 0.5318
+[0;32mEPOCH: 40[0m
+[0;31m----------[0m
+Epoch = [  41/ 100] TrainLoss = 0.5303 ValLoss = 0.5328
+[0;32mEPOCH: 41[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  42/ 100] TrainLoss = 0.5328 ValLoss = 0.5307
+[0;32mEPOCH: 42[0m
+[0;31m----------[0m
+Epoch = [  43/ 100] TrainLoss = 0.5305 ValLoss = 0.5328
+[0;32mEPOCH: 43[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  44/ 100] TrainLoss = 0.5321 ValLoss = 0.5305
+[0;32mEPOCH: 44[0m
+[0;31m----------[0m
+Epoch = [  45/ 100] TrainLoss = 0.5308 ValLoss = 0.5316
+[0;32mEPOCH: 45[0m
+[0;31m----------[0m
+Epoch = [  46/ 100] TrainLoss = 0.5309 ValLoss = 0.531
+[0;32mEPOCH: 46[0m
+[0;31m----------[0m
+Epoch = [  47/ 100] TrainLoss = 0.5305 ValLoss = 0.5319
+[0;32mEPOCH: 47[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  48/ 100] TrainLoss = 0.5302 ValLoss = 0.5292
+[0;32mEPOCH: 48[0m
+[0;31m----------[0m
+Epoch = [  49/ 100] TrainLoss = 0.53 ValLoss = 0.5301
+[0;32mEPOCH: 49[0m
+[0;31m----------[0m
+Epoch = [  50/ 100] TrainLoss = 0.5297 ValLoss = 0.5297
+[0;32mEPOCH: 50[0m
+[0;31m----------[0m
+Epoch = [  51/ 100] TrainLoss = 0.5298 ValLoss = 0.5302
+[0;32mEPOCH: 51[0m
+[0;31m----------[0m
+Epoch = [  52/ 100] TrainLoss = 0.5294 ValLoss = 0.5294
+[0;32mEPOCH: 52[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  53/ 100] TrainLoss = 0.529 ValLoss = 0.5278
+[0;32mEPOCH: 53[0m
+[0;31m----------[0m
+Epoch = [  54/ 100] TrainLoss = 0.5281 ValLoss = 0.5288
+[0;32mEPOCH: 54[0m
+[0;31m----------[0m
+Epoch = [  55/ 100] TrainLoss = 0.5288 ValLoss = 0.5298
+[0;32mEPOCH: 55[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  56/ 100] TrainLoss = 0.5286 ValLoss = 0.5274
+[0;32mEPOCH: 56[0m
+[0;31m----------[0m
+Epoch = [  57/ 100] TrainLoss = 0.5284 ValLoss = 0.5283
+[0;32mEPOCH: 57[0m
+[0;31m----------[0m
+Epoch = [  58/ 100] TrainLoss = 0.5282 ValLoss = 0.5277
+[0;32mEPOCH: 58[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  59/ 100] TrainLoss = 0.5273 ValLoss = 0.5262
+[0;32mEPOCH: 59[0m
+[0;31m----------[0m
+Epoch = [  60/ 100] TrainLoss = 0.5281 ValLoss = 0.5278
+[0;32mEPOCH: 60[0m
+[0;31m----------[0m
+Epoch = [  61/ 100] TrainLoss = 0.5286 ValLoss = 0.5263
+[0;32mEPOCH: 61[0m
+[0;31m----------[0m
+Epoch = [  62/ 100] TrainLoss = 0.5271 ValLoss = 0.5269
+[0;32mEPOCH: 62[0m
+[0;31m----------[0m
+Epoch = [  63/ 100] TrainLoss = 0.5272 ValLoss = 0.5272
+[0;32mEPOCH: 63[0m
+[0;31m----------[0m
+Epoch = [  64/ 100] TrainLoss = 0.5276 ValLoss = 0.5268
+[0;32mEPOCH: 64[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  65/ 100] TrainLoss = 0.5274 ValLoss = 0.5255
+[0;32mEPOCH: 65[0m
+[0;31m----------[0m
+Epoch = [  66/ 100] TrainLoss = 0.5267 ValLoss = 0.5267
+[0;32mEPOCH: 66[0m
+[0;31m----------[0m
+Epoch = [  67/ 100] TrainLoss = 0.5267 ValLoss = 0.5258
+[0;32mEPOCH: 67[0m
+[0;31m----------[0m
+Epoch = [  68/ 100] TrainLoss = 0.526 ValLoss = 0.5259
+[0;32mEPOCH: 68[0m
+[0;31m----------[0m
+Epoch = [  69/ 100] TrainLoss = 0.5268 ValLoss = 0.5266
+[0;32mEPOCH: 69[0m
+[0;31m----------[0m
+Epoch = [  70/ 100] TrainLoss = 0.526 ValLoss = 0.5262
+[0;32mEPOCH: 70[0m
+[0;31m----------[0m
+Epoch = [  71/ 100] TrainLoss = 0.5247 ValLoss = 0.5259
+[0;32mEPOCH: 71[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  72/ 100] TrainLoss = 0.5249 ValLoss = 0.5243
+[0;32mEPOCH: 72[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  73/ 100] TrainLoss = 0.5261 ValLoss = 0.5239
+[0;32mEPOCH: 73[0m
+[0;31m----------[0m
+Epoch = [  74/ 100] TrainLoss = 0.5249 ValLoss = 0.5257
+[0;32mEPOCH: 74[0m
+[0;31m----------[0m
+Epoch = [  75/ 100] TrainLoss = 0.5247 ValLoss = 0.525
+[0;32mEPOCH: 75[0m
+[0;31m----------[0m
+Epoch = [  76/ 100] TrainLoss = 0.5233 ValLoss = 0.5247
+[0;32mEPOCH: 76[0m
+[0;31m----------[0m
+Epoch = [  77/ 100] TrainLoss = 0.525 ValLoss = 0.5246
+[0;32mEPOCH: 77[0m
+[0;31m----------[0m
+Epoch = [  78/ 100] TrainLoss = 0.5239 ValLoss = 0.5245
+[0;32mEPOCH: 78[0m
+[0;31m----------[0m
+Epoch = [  79/ 100] TrainLoss = 0.5251 ValLoss = 0.5267
+[0;32mEPOCH: 79[0m
+[0;31m----------[0m
+Epoch = [  80/ 100] TrainLoss = 0.5244 ValLoss = 0.5248
+[0;32mEPOCH: 80[0m
+[0;31m----------[0m
+Epoch = [  81/ 100] TrainLoss = 0.5233 ValLoss = 0.5262
+[0;32mEPOCH: 81[0m
+[0;31m----------[0m
+Epoch = [  82/ 100] TrainLoss = 0.525 ValLoss = 0.5251
+[0;32mEPOCH: 82[0m
+[0;31m----------[0m
+Epoch = [  83/ 100] TrainLoss = 0.5238 ValLoss = 0.5243
+[0;32mEPOCH: 83[0m
+[0;31m----------[0m
+Epoch = [  84/ 100] TrainLoss = 0.5233 ValLoss = 0.5245
+[0;32mEPOCH: 84[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  85/ 100] TrainLoss = 0.5233 ValLoss = 0.5222
+[0;32mEPOCH: 85[0m
+[0;31m----------[0m
+Epoch = [  86/ 100] TrainLoss = 0.5217 ValLoss = 0.5278
+[0;32mEPOCH: 86[0m
+[0;31m----------[0m
+Epoch = [  87/ 100] TrainLoss = 0.5252 ValLoss = 0.5241
+[0;32mEPOCH: 87[0m
+[0;31m----------[0m
+Epoch = [  88/ 100] TrainLoss = 0.5232 ValLoss = 0.5234
+[0;32mEPOCH: 88[0m
+[0;31m----------[0m
+Epoch = [  89/ 100] TrainLoss = 0.5228 ValLoss = 0.523
+[0;32mEPOCH: 89[0m
+[0;31m----------[0m
+Epoch = [  90/ 100] TrainLoss = 0.523 ValLoss = 0.523
+[0;32mEPOCH: 90[0m
+[0;31m----------[0m
+Epoch = [  91/ 100] TrainLoss = 0.5239 ValLoss = 0.5224
+[0;32mEPOCH: 91[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  92/ 100] TrainLoss = 0.5237 ValLoss = 0.5218
+[0;32mEPOCH: 92[0m
+[0;31m----------[0m
+Epoch = [  93/ 100] TrainLoss = 0.523 ValLoss = 0.5224
+[0;32mEPOCH: 93[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  94/ 100] TrainLoss = 0.5222 ValLoss = 0.5217
+[0;32mEPOCH: 94[0m
+[0;31m----------[0m
+Epoch = [  95/ 100] TrainLoss = 0.5231 ValLoss = 0.5226
+[0;32mEPOCH: 95[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  96/ 100] TrainLoss = 0.5217 ValLoss = 0.5213
+[0;32mEPOCH: 96[0m
+[0;31m----------[0m
+Epoch = [  97/ 100] TrainLoss = 0.5227 ValLoss = 0.5222
+[0;32mEPOCH: 97[0m
+[0;31m----------[0m
+Epoch = [  98/ 100] TrainLoss = 0.5225 ValLoss = 0.5221
+[0;32mEPOCH: 98[0m
+[0;31m----------[0m
+NEW BEST VALIDATION LOSS
+Epoch = [  99/ 100] TrainLoss = 0.5223 ValLoss = 0.5211
+[0;32mEPOCH: 99[0m
+[0;31m----------[0m
+Epoch = [ 100/ 100] TrainLoss = 0.5221 ValLoss = 0.5223

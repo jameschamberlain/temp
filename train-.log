@@ -1,0 +1,4 @@
+  File "train_model.py", line 159
+    if __name__ == "__main__":
+                             ^
+SyntaxError: invalid syntax

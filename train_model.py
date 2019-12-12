@@ -5,26 +5,37 @@ import numpy as np
 from torch import optim
 from torch.autograd import Variable
 from torch.utils.data import DataLoader
-
+import pandas as pd
 import pytorch_ssim
 from UNET import UNet
+from early_stopper import EarlyStopper
 from utils.data_loader import collate_batches, MRIDataset, load_data_path
 import matplotlib.pyplot as plt
+import pickle
 
 RED = '\033[0;31m'
 GREEN = '\033[0;32m'
 YELLOW = '\033[0;33m'
 ENDC = '\033[0m'
-info = lambda x: print(x)
-warn = lambda x: print(YELLOW + x + ENDC)
-success = lambda x: print(GREEN + x + ENDC)
-error = lambda x: print(RED + x + ENDC)
+
+
+def info(x): return print(x)
+
+
+def warn(x): return print(YELLOW + x + ENDC)
+
+
+def success(x): return print(GREEN + x + ENDC)
+
+
+def error(x): return print(RED + x + ENDC)
 
 
 def advance_epoch(model, data_loader, optimizer):
     model.train()
     losses = []
     avg_loss = 0.
+    criterion = pytorch_ssim.SSIM()
 
     for iter, data in enumerate(data_loader):
         img_gt, img_und, rawdata_und, masks, norm = data
@@ -37,7 +48,7 @@ def advance_epoch(model, data_loader, optimizer):
         output = model(img_in)
         # print(output.shape)
 
-        loss = 1 - pytorch_ssim.ssim(output, ground_truth)
+        loss = 1 - criterion(output, ground_truth)
         # loss = np.sum(loss)
         optimizer.zero_grad()
         loss.backward()
@@ -51,7 +62,7 @@ def advance_epoch(model, data_loader, optimizer):
 def evaluate(device, model, data_loader):
     model.eval()
     losses = []
-
+    criterion = pytorch_ssim.SSIM()
     with torch.no_grad():
         for iter, data in enumerate(data_loader):
             img_gt, img_und, rawdata_und, masks, norm = data
@@ -65,20 +76,32 @@ def evaluate(device, model, data_loader):
             # output = output
             # print(norm.shape)
 
-            loss = 1 - pytorch_ssim.ssim(output, img_gt)
+            loss = 1-criterion(output, img_gt)
+
             losses.append(loss.item())
     return np.mean(losses)
 
 
-CENTRE_FRACTION = 0.08
-ACCELERATION = 4
-EPSILON = 0.00001
-GAMMA = 0.1
-STEP_SIZE = 10
-BATCH_SIZE = 14
-NUMBER_EPOCHS = 30
-NUMBER_POOL_LAYERS = 4
+CENTRE_FRACTION = 0.04
+ACCELERATION =8 
+EPSILON = 0.001
+BATCH_SIZE = 9
+NUMBER_EPOCHS =100 
+NUMBER_POOL_LAYERS = 4  # Cant change
 DROP_PROB = 0
+
+
+def plot_graph(train_loss, val_loss):
+    x = list(range(NUMBER_EPOCHS))
+    y1 = train_loss
+    y2 = val_loss
+    plt.plot(y1, 'b-')
+    plt.plot(y2, 'r-')
+
+    plt.xlabel("Epochs")
+    plt.ylabel("loss, DSSIM")
+    plt.title("Using base optimal params with 8x acceleration")
+    plt.show()
 
 
 def main():
@@ -122,12 +145,17 @@ def main():
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
     warn("Constructing model")
-    model = UNet(1, 1, 32, NUMBER_POOL_LAYERS, DROP_PROB).to(device)
+    model = UNet(1, 1, 48, NUMBER_POOL_LAYERS, DROP_PROB).to(device)
     success("Constructed model")
 
     criterion = pytorch_ssim.SSIM()
-
-    optimiser = optim.Adam(model.parameters(), lr=EPSILON)
+    # criterion = nn.MSELoss()
+    optimiser = optim.SGD(model.parameters(), lr=EPSILON, momentum=0.9)
+    # optimiser = optim.Adam(model.parameters(), lr=EPSILON)
+    # optimiser = optim.AdamW(params=model.parameters(), lr=EPSILON)
+    # optimiser = optim.Adagrad(params=model.parameters(), lr=EPSILON, lr_decay=EPSILON/NUMBER_EPOCHS)
+    # optimiser = optim.ASGD(params=model.parameters(),lr=EPSILON)
+    # optimiser = optim.Adamax(model.parameters(), lr=EPSILON)
     # optimiser = torch.optim.RMSprop(model.parameters(), EPSILON, weight_decay=0)
     # total_step = len(train_loader)
     # batch_loss = list()
@@ -139,6 +167,7 @@ def main():
     # scheduler = torch.optim.lr_scheduler.StepLR(optimizer=optimiser, step_size=STEP_SIZE, gamma=GAMMA)
     val_losses = []
     train_losses = []
+    stopper = EarlyStopper(15)
     for epoch in range(0, NUMBER_EPOCHS):
         success(f"EPOCH: {epoch}")
         error("-" * 10)
@@ -146,16 +175,39 @@ def main():
         train_losses.append(train_loss)
         # scheduler.step(epoch)
         dev_loss = evaluate(device, model, val_loader)
+        stop = stopper.stop(dev_loss, model)
+        if stop:
+            break
+
         val_losses.append(dev_loss)
         # visualize(args, epoch, model, display_loader, writer)
         info(
-            f'Epoch = [{epoch:4d}/{NUMBER_EPOCHS:4d}] TrainLoss = {train_loss:.4g} '
+            f'Epoch = [{epoch + 1:4d}/{NUMBER_EPOCHS:4d}] TrainLoss = {train_loss:.4g} '
             f'ValLoss = {dev_loss:.4g}',
         )
-    torch.save(model.state_dict(),
-               f"./models/UNET-B{BATCH_SIZE}e-{NUMBER_EPOCHS}-lr{EPSILON}-ssim-adam.pkl")
-    plt.plot(range(NUMBER_EPOCHS), train_losses)
-    plt.plot(range(NUMBER_EPOCHS), val_losses)
+
+    # torch.save(model.state_dict(),
+    #            f"./vary-loss/models/UNET-lr{EPSILON}-L2.pkl")
+    # x = range(1, NUMBER_EPOCHS)
+    # print(train_losses)
+    # print(val_losses)
+    # plt.plot(train_losses)
+    # plt.plot(val_losses)
+
+    plot_graph(train_losses, val_losses)
+
+    # plt.xlim(NUMBER_EPOCHS+1)
+    # data = pd.DataFrame({'epochs' : range(NUMBER_EPOCHS), 'train loss':train_losses, 'val loss': val_losses})
+
+    # plt.plot('epochs','train loss','b-')
+    # plt.plot('epochs','val loss','r-')
+    # plt.legend()
+
+    plt.savefig(f"./vary-loss/plots/loss-variance-lr{EPSILON}-8xFinal.png")
+    with open("./vary-loss/pickles/train_loss_8xFinal.pkl", 'wb') as f:
+        pickle.dump(train_losses, f)
+    with open("./vary-optim/pickles/val_loss_8xFinal.pkl", 'wb') as f:
+        pickle.dump(val_losses, f)
 
 
 if __name__ == "__main__":
