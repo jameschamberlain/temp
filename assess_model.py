@@ -23,10 +23,11 @@ val_loader = DataLoader(val_dataset, shuffle=True, batch_size=1, num_workers=num
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
 lr = "0.01"
+ch = '64'
 
-model = UNET.UNet(1,1,32,4,0).to(device)
-name = f'UNET-B14-e30-lr{lr}-ssim-adam'
-model.load_state_dict(torch.load(f"./vary-lr/models/{name}.pkl"))
+model = UNET.UNet(1,1,64,4,0).to(device)
+name = f'UNET-B6-e30-ch{ch}-ssim-adam'
+model.load_state_dict(torch.load(f"./vary-ch/models/{name}.pkl"))
 model.eval()
 fig = plt.figure()
 
@@ -59,7 +60,7 @@ for i, sample in enumerate(val_loader):
     # from left to right: mask, masked kspace, undersampled image, ground truth
     if ssim > 0.8 and counter <=3:
         show_slices(all_imgs, [0, 1, 2], cmap='gray')
-        plt.savefig(f"./vary-lr/reconstructions/lr{lr}-ssim-{ssim:.2f}.png")
+        plt.savefig(f"./vary-ch/reconstructions/ch{ch}-ssim-{ssim:.2f}.png")
         plt.pause(1)
         counter += 1
 

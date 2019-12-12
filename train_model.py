@@ -76,10 +76,11 @@ ACCELERATION = 4
 EPSILON = 0.001
 GAMMA = 0.1
 STEP_SIZE = 10
-BATCH_SIZE = 14
+BATCH_SIZE = 13
 NUMBER_EPOCHS = 30
 NUMBER_POOL_LAYERS = 4
 DROP_PROB = 0
+CHANNELS = 32
 
 
 def main():
@@ -123,7 +124,7 @@ def main():
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
     warn("Constructing model")
-    model = UNet(1, 1, 32, NUMBER_POOL_LAYERS, DROP_PROB).to(device)
+    model = UNet(1, 1, CHANNELS, NUMBER_POOL_LAYERS, DROP_PROB).to(device)
     success("Constructed model")
 
     criterion = pytorch_ssim.SSIM()
@@ -137,7 +138,6 @@ def main():
     warn("Starting training")
     # fig = plt.figure()
 
-    # scheduler = torch.optim.lr_scheduler.StepLR(optimizer=optimiser, step_size=STEP_SIZE, gamma=GAMMA)
     val_losses = []
     train_losses = []
     for epoch in range(0, NUMBER_EPOCHS):
@@ -154,14 +154,14 @@ def main():
             f'ValLoss = {dev_loss:.4g}',
         )
     
-    name = f'UNET-B{BATCH_SIZE}-e{NUMBER_EPOCHS}-lr{EPSILON}-ssim-adam-II'
+    name = f'UNET-B{BATCH_SIZE}-e{NUMBER_EPOCHS}-ch{CHANNELS}-ssim-adam'
     # save model
-    torch.save(model.state_dict(),f"./vary-lr/models/{name}.pkl")
+    torch.save(model.state_dict(),f"./vary-ch/models/{name}.pkl")
 
     # save losses
-    with open(f'./vary-lr/pickle/{name}-train.pkl', 'wb') as f:
+    with open(f'./vary-ch/pickle/{name}-train.pkl', 'wb') as f:
         pickle.dump(train_losses, f)
-    with open(f'./vary-lr/pickle/{name}-val.pkl', 'wb') as f:
+    with open(f'./vary-ch/pickle/{name}-val.pkl', 'wb') as f:
         pickle.dump(val_losses, f)
 
     # save plots
@@ -169,7 +169,7 @@ def main():
     plt.plot(range(NUMBER_EPOCHS), val_losses)
     plt.xlabel("Epochs")
     plt.ylabel("loss, ssim")
-    plt.savefig(f'./vary-lr/diagrams/{name}.png')
+    plt.savefig(f'./vary-ch/diagrams/{name}.png')
 
 
 if __name__ == "__main__":
