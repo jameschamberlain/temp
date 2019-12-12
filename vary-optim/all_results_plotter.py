@@ -1,13 +1,14 @@
 import pickle
 import matplotlib.pyplot as plt
 import pandas as pd
-# optimisers = ['adagrad','adam','adamax','adamW','ASGD','SGD']
-optimisers = ['adamW', 'adam']
+optimisers = ['adagrad', 'adam', 'adamax', 'adamW', 'ASGD', 'SGD']
+# optimisers = ['adamW', 'adam']
 train_losses = []
 val_losses = []
-# df=pd.DataFrame({'adagrad': {'train':[], 'val':[]}, 'adam': {'train':[], 'val':[]}, 'adamax': {'train':[], 'val':[]}, 'adamW': {'train':[], 'val':[]}, 'ASGD': {'train':[], 'val':[]},'SGD': {'train':[], 'val':[]}  })
-df = pd.DataFrame({'adamW': {'train': [], 'val': []},
-                   'adam': {'train': [], 'val': []}})
+df = pd.DataFrame({'adagrad': {'train': [], 'val': []}, 'adam': {'train': [], 'val': []}, 'adamax': {'train': [], 'val': [
+]}, 'adamW': {'train': [], 'val': []}, 'ASGD': {'train': [], 'val': []}, 'SGD': {'train': [], 'val': []}})
+# df = pd.DataFrame({'adamW': {'train': [], 'val': []},
+#                    'adam': {'train': [], 'val': []}})
 for optimiser in optimisers:
 
     df[optimiser]['train'] = pickle.load(
