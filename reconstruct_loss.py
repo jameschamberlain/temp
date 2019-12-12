@@ -1,7 +1,7 @@
 import pickle
 import matplotlib.pyplot as plt
 
-optimiser = "SSIML1"
+optimiser = "8xFinal"
 
 TRAIN_LOSS = pickle.load(open(f"./vary-loss/pickles/train_loss_{optimiser}.pkl",
                               'rb'))

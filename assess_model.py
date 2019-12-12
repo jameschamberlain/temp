@@ -24,8 +24,10 @@ val_loader = DataLoader(val_dataset, shuffle=True, batch_size=1, num_workers=num
 
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 optimiser = 'SSIML1'
-model = UNET.UNet(1,1,32,4,0).to(device)
-model.load_state_dict(torch.load(f"./vary-loss/models/UNET-lr0.0001-{optimiser}.pkl"))
+model = UNET.UNet(1,1,48,4,0).to(device)
+# model.load_state_dict(torch.load(f"./vary-loss/models/UNET-lr0.0001-{optimiser}.pkl"))
+model = (torch.load(
+    f"./best_model_8x.pkl"))
 model.eval()
 fig = plt.figure()
 counter= 0
@@ -54,9 +56,9 @@ for i, sample in enumerate(val_loader):
     all_imgs = torch.stack([A.detach(), B.detach(), C.detach()], dim=0)
 
     # from left to right: mask, masked kspace, undersampled image, ground truth
-    if ssim > 0.9 and counter <=3:
+    if ssim > 0.8 and counter <=3:
         show_slices(all_imgs, [0, 1, 2], cmap='gray')
-        # plt.savefig(f"./vary-loss/reconstructions/{optimiser}/{ssim:.2f}-{optimiser}30.png")
+        plt.savefig(f"./recon/final_4x{ssim}.png")
         plt.pause(1)
         counter += 1
 
