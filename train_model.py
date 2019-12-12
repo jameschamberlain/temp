@@ -10,6 +10,7 @@ import pytorch_ssim
 from UNET import UNet
 from utils.data_loader import collate_batches, MRIDataset, load_data_path
 import matplotlib.pyplot as plt
+import sys
 
 RED = '\033[0;31m'
 GREEN = '\033[0;32m'
@@ -21,12 +22,30 @@ success = lambda x: print(GREEN + x + ENDC)
 error = lambda x: print(RED + x + ENDC)
 
 
+def loading_bar(percentage):
+    length = 30.0
+    bar = "|"
+    increment = 1 / length
+    current = increment
+    while percentage > current and current <= 1.0:
+        bar += "#"
+        current += increment
+    while current <= 1.0:
+        bar += " "
+        current += increment
+    bar += "|"
+    sys.stdout.write("\r" + bar)
+
+
 def advance_epoch(model, data_loader, optimizer):
     model.train()
     losses = []
     avg_loss = 0.
 
+    print("TRAINING: ")
+    print("")
     for iter, data in enumerate(data_loader):
+        loading_bar(iter / len(data_loader))
         img_gt, img_und, rawdata_und, masks, norm = data
 
         img_in = Variable(torch.FloatTensor(img_und)).cuda()
@@ -79,6 +98,8 @@ BATCH_SIZE = 14
 NUMBER_EPOCHS = 30
 NUMBER_POOL_LAYERS = 4
 DROP_PROB = 0
+CHANNEL_WIDTH = 32
+
 
 
 def main():
@@ -152,10 +173,12 @@ def main():
             f'Epoch = [{epoch:4d}/{NUMBER_EPOCHS:4d}] TrainLoss = {train_loss:.4g} '
             f'ValLoss = {dev_loss:.4g}',
         )
-    torch.save(model.state_dict(),
-               f"./models/UNET-B{BATCH_SIZE}e-{NUMBER_EPOCHS}-lr{EPSILON}-ssim-adam.pkl")
+    # torch.save(model.state_dict(),
+    #            f"./models/UNET-B{BATCH_SIZE}e-{NUMBER_EPOCHS}-lr{EPSILON}-ssim-adam.pkl")
     plt.plot(range(NUMBER_EPOCHS), train_losses)
     plt.plot(range(NUMBER_EPOCHS), val_losses)
+    plt.show()
+    plt.savefig(CHANNEL_WIDTH +'.png')
 
 
 if __name__ == "__main__":
