@@ -33,8 +33,7 @@ def advance_epoch(model, data_loader, optimizer):
     model.train()
     losses = []
     avg_loss = 0.
-    criterion = [pytorch_ssim.SSIM(), nn.L1Loss()]
-    alpha = 0.84
+    criterion = pytorch_ssim.SSIM()
 
     for iter, data in enumerate(data_loader):
         img_gt, img_und, rawdata_und, masks, norm = data
@@ -47,8 +46,7 @@ def advance_epoch(model, data_loader, optimizer):
         output = model(img_in)
         # print(output.shape)
         
-
-        loss = (alpha * (1-criterion[0](output, ground_truth))) + (1-alpha)*criterion[1](output,ground_truth)
+        loss = 1-criterion(output,ground_truth)
         # loss = np.sum(loss)
         optimizer.zero_grad()
         loss.backward()
@@ -62,8 +60,7 @@ def advance_epoch(model, data_loader, optimizer):
 def evaluate(device, model, data_loader):
     model.eval()
     losses = []
-    criterion = [pytorch_ssim.SSIM(), nn.L1Loss()]
-    alpha = 0.84
+    criterion = pytorch_ssim.SSIM()
     with torch.no_grad():
         for iter, data in enumerate(data_loader):
             img_gt, img_und, rawdata_und, masks, norm = data
@@ -77,20 +74,18 @@ def evaluate(device, model, data_loader):
             # output = output
             # print(norm.shape)
 
-            loss = (alpha* (1-criterion[0](output, img_gt))) + (1-alpha)*(criterion[1](output,img_gt))
+            loss = criterion(output,img_gt) 
 
             losses.append(loss.item())
     return np.mean(losses)
 
 
-CENTRE_FRACTION = 0.04
-ACCELERATION =8 
-EPSILON = 0.0001
-GAMMA = 0.1
-STEP_SIZE = 10
-BATCH_SIZE = 14
-NUMBER_EPOCHS = 30
-NUMBER_POOL_LAYERS = 4
+CENTRE_FRACTION = 0.08 
+ACCELERATION = 4 
+EPSILON = 0.001
+BATCH_SIZE =9 
+NUMBER_EPOCHS = 100
+NUMBER_POOL_LAYERS = 4 #Cant change
 DROP_PROB = 0
 
 def plot_graph(train_loss,val_loss):
@@ -147,7 +142,7 @@ def main():
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
     warn("Constructing model")
-    model = UNet(1, 1, 32, NUMBER_POOL_LAYERS, DROP_PROB).to(device)
+    model = UNet(1, 1, 48, NUMBER_POOL_LAYERS, DROP_PROB).to(device)
     success("Constructed model")
 
     criterion = pytorch_ssim.SSIM()
