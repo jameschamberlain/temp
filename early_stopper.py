@@ -13,7 +13,7 @@ class EarlyStopper:
             return False
         if dev_loss < self.best_value:
             print("NEW BEST VALIDATION LOSS")
-            torch.save(model, "best_model.py")
+            torch.save(model, "best_model_8x.pkl")
             self.best_value = dev_loss
             self.counter = 0
             return False

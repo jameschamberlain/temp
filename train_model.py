@@ -76,17 +76,17 @@ def evaluate(device, model, data_loader):
             # output = output
             # print(norm.shape)
 
-            loss = criterion(output, img_gt)
+            loss = 1-criterion(output, img_gt)
 
             losses.append(loss.item())
     return np.mean(losses)
 
 
-CENTRE_FRACTION = 0.08
-ACCELERATION = 4
+CENTRE_FRACTION = 0.04
+ACCELERATION =8 
 EPSILON = 0.001
 BATCH_SIZE = 9
-NUMBER_EPOCHS = 100
+NUMBER_EPOCHS =100 
 NUMBER_POOL_LAYERS = 4  # Cant change
 DROP_PROB = 0
 
@@ -100,7 +100,7 @@ def plot_graph(train_loss, val_loss):
 
     plt.xlabel("Epochs")
     plt.ylabel("loss, DSSIM")
-    plt.title("Using base optimal params")
+    plt.title("Using base optimal params with 8x acceleration")
     plt.show()
 
 
@@ -203,10 +203,10 @@ def main():
     # plt.plot('epochs','val loss','r-')
     # plt.legend()
 
-    plt.savefig(f"./vary-loss/plots/loss-variance-lr{EPSILON}-4xFinal.png")
-    with open("./vary-loss/pickles/train_loss_4xFinal.pkl", 'wb') as f:
+    plt.savefig(f"./vary-loss/plots/loss-variance-lr{EPSILON}-8xFinal.png")
+    with open("./vary-loss/pickles/train_loss_8xFinal.pkl", 'wb') as f:
         pickle.dump(train_losses, f)
-    with open("./vary-optim/pickles/val_loss_4xFinal.pkl", 'wb') as f:
+    with open("./vary-optim/pickles/val_loss_8xFinal.pkl", 'wb') as f:
         pickle.dump(val_losses, f)
 
 
