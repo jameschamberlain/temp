@@ -8,8 +8,8 @@ import UNET
 import pytorch_ssim
 import numpy as np
 
-# data_path_train = '/home/sam/datasets/FastMRI/NC2019MRI/train'
-data_path_train = '/data/local/NC2019MRI/train'
+data_path_train = '/home/sam/datasets/FastMRI/NC2019MRI/train'
+# data_path_train = '/data/local/NC2019MRI/train'
 
 data_path_val = data_path_train
 data_list = load_data_path(data_path_train, data_path_val)
@@ -23,9 +23,9 @@ val_dataset = MRIDataset(data_list['val'], acceleration=acc, center_fraction=cen
 val_loader = DataLoader(val_dataset, shuffle=True, batch_size=1, num_workers=num_workers, collate_fn=collate_batches)
 
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
-optimiser = 'adagrad'
+optimiser = 'SSIML1'
 model = UNET.UNet(1,1,32,4,0).to(device)
-model.load_state_dict(torch.load(f"./vary-optim/models/UNET-lr0.0001-{optimiser}.pkl"))
+model.load_state_dict(torch.load(f"./vary-loss/models/UNET-lr0.0001-{optimiser}.pkl"))
 model.eval()
 fig = plt.figure()
 counter= 0
@@ -56,7 +56,7 @@ for i, sample in enumerate(val_loader):
     # from left to right: mask, masked kspace, undersampled image, ground truth
     if ssim > 0.9 and counter <=3:
         show_slices(all_imgs, [0, 1, 2], cmap='gray')
-        plt.savefig(f"./vary-optim/reconstructions/{optimiser}-ssim/{ssim:.2f}-{optimiser}30.png")
+        # plt.savefig(f"./vary-loss/reconstructions/{optimiser}/{ssim:.2f}-{optimiser}30.png")
         plt.pause(1)
         counter += 1
 
