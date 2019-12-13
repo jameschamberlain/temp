@@ -12,7 +12,7 @@ def collate_batches(batch):
     batch_len = len(batch)
     data = torch.ones(batch_len, 1, 320, 320)
     ret_list = torch.ones(batch_len, 1, 320, 320)
-
+    # print(batch.shape())
     for i in range(batch_len):
         input_value = batch[i][1]
         input_value = T.complex_abs(input_value)
@@ -24,10 +24,7 @@ def collate_batches(batch):
         ret = T.center_crop(ret, (320, 320))
         ret_list[i, 0, :, :] = ret
 
-
-
-    return ret_list, data, None, None, None
-
+    return ret_list, data, batch[:][2], batch[:][3], batch[:][4]
 
 def show_slices(data, slice_nums, cmap=None):  # visualisation
     fig = plt.figure(figsize=(15, 10))
@@ -111,7 +108,7 @@ def load_data_path(train_data_path, val_data_path):
             if not os.path.isfile(subject_data_path): continue
 
             with h5py.File(subject_data_path, 'r') as data:
-                print(data.keys())
+                # print(data.keys())
                 num_slice = data['kspace'].shape[0]
 
             # the first 5 slices are mostly noise so it is better to exlude them
@@ -123,7 +120,7 @@ def load_data_path_test(test_data_path,acceleration):
     data_list = {}
     train_and_val = ['train', 'val']
     data_path = test_data_path
-    print(test_data_path)
+    # print(test_data_path)
     # for i in range(len(data_path)):
         
     data_list['test'] = []
@@ -138,7 +135,7 @@ def load_data_path_test(test_data_path,acceleration):
             continue
 
         with h5py.File(subject_data_path, 'r') as data:
-            print(data.keys())
+            # print(data.keys())
             num_slice = data[f'kspace_{acceleration}af'].shape[0]
 
         # the first 5 slices are mostly noise so it is better to exlude them
