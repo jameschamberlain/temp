@@ -58,7 +58,10 @@ def get_epoch_batch(subject_id, acc, center_fract, use_seed=True):
     fname, rawdata_name, slice = subject_id
 
     with h5py.File(rawdata_name, 'r') as data:
-        rawdata = data['kspace'][slice]
+        try:
+            rawdata = data['kspace'][slice]
+        except:
+            rawdata = data[f'kspace_{acc}af'][slice]
 
     slice_kspace = T.to_tensor(rawdata).unsqueeze(0)
     S, Ny, Nx, ps = slice_kspace.shape
@@ -108,9 +111,42 @@ def load_data_path(train_data_path, val_data_path):
             if not os.path.isfile(subject_data_path): continue
 
             with h5py.File(subject_data_path, 'r') as data:
+                print(data.keys())
                 num_slice = data['kspace'].shape[0]
 
             # the first 5 slices are mostly noise so it is better to exlude them
             data_list[train_and_val[i]] += [(fname, subject_data_path, slice) for slice in range(5, num_slice)]
     
     return data_list
+
+def load_data_path_test(test_data_path,acceleration):
+    data_list = {}
+    train_and_val = ['train', 'val']
+    data_path = test_data_path
+    print(test_data_path)
+    # for i in range(len(data_path)):
+        
+    data_list['test'] = []
+
+    #     which_data_path = data_path[i]
+    #     print(which_data_path)
+    for fname in sorted(os.listdir(test_data_path)):
+
+        subject_data_path = os.path.join(test_data_path, fname)
+        print(subject_data_path)
+        if not os.path.isfile(subject_data_path):
+            continue
+
+        with h5py.File(subject_data_path, 'r') as data:
+            print(data.keys())
+            num_slice = data[f'kspace_{acceleration}af'].shape[0]
+
+        # the first 5 slices are mostly noise so it is better to exlude them
+        data_list['test'] += [(fname, subject_data_path, slice)
+                                        for slice in range(5, num_slice)]
+
+    return data_list
+
+
+
+

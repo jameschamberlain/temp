@@ -2,24 +2,26 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 import matplotlib.pyplot as plt
-from utils.data_loader import MRIDataset, load_data_path, show_slices, collate_batches
+from utils.data_loader import MRIDataset, load_data_path, show_slices, collate_batches, load_data_path_test
 import fastMRI.functions.transforms as T
 import UNET
 import pytorch_ssim
 import numpy as np
 
-data_path_train = '/home/sam/datasets/FastMRI/NC2019MRI/train'
+data_path_train = '/home/sam/datasets/FastMRI/NC2019MRI/test'
 # data_path_train = '/data/local/NC2019MRI/train'
 
 data_path_val = data_path_train
-data_list = load_data_path(data_path_train, data_path_val)
+# data_list = load_data_path(data_path_train, data_path_val)
+
 
 acc = 4
+data_list = load_data_path_test(data_path_train,acc)
 cen_fract = 0.08
 seed = False  # random masks for each slice
 num_workers = 8
 
-val_dataset = MRIDataset(data_list['val'], acceleration=acc, center_fraction=cen_fract, use_seed=seed)
+val_dataset = MRIDataset(data_list['test'], acceleration=acc, center_fraction=cen_fract, use_seed=seed)
 val_loader = DataLoader(val_dataset, shuffle=True, batch_size=1, num_workers=num_workers, collate_fn=collate_batches)
 
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
