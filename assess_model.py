@@ -27,7 +27,7 @@ optimiser = 'SSIML1'
 model = UNET.UNet(1,1,48,4,0).to(device)
 # model.load_state_dict(torch.load(f"./vary-loss/models/UNET-lr0.0001-{optimiser}.pkl"))
 model = (torch.load(
-    f"./best_model_8x.pkl"))
+    f"./best_model_4x.pkl"))
 model.eval()
 fig = plt.figure()
 counter= 0
